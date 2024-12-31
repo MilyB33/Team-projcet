@@ -5,8 +5,15 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  app.enableCors({
+    allowedHeaders: ['content-type'],
+    origin: '*',
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Clocker')
@@ -18,6 +25,6 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 9000);
 }
 bootstrap();

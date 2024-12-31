@@ -30,7 +30,8 @@ export class UsersController {
   @Post()
   @ApiCreatedResponse({ type: UserEntity })
   async create(@Body() createUserDto: CreateUserDto) {
-    return new UserEntity(await this.usersService.create(createUserDto));
+    await this.usersService.create(createUserDto);
+    return { message: 'Account successfully created!' };
   }
 
   @Get()

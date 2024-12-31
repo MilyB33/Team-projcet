@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Exclude } from 'class-transformer';
+import { AccountTypeEntity } from './accountType.entity';
 
 export class UserEntity implements User {
   constructor(partial: Partial<UserEntity>) {
@@ -17,7 +18,20 @@ export class UserEntity implements User {
   updatedAt: Date;
 
   @ApiProperty()
-  name: string;
+  first_name: string;
+
+  @ApiProperty()
+  last_name: string;
+
+  @ApiProperty({ nullable: true })
+  company: string;
+
+  @ApiProperty()
+  typeId: number;
+
+  @ApiProperty()
+  @Exclude()
+  type: AccountTypeEntity;
 
   @ApiProperty()
   email: string;

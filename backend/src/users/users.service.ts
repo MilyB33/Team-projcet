@@ -1,5 +1,9 @@
 // src/users/users.service.ts
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,15 +16,40 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
+    const user = await this.findByEmail(createUserDto.email);
+
+    if (user) {
+      throw new ConflictException('User with that email already exists');
+    }
+
+    if (createUserDto.account_type === 'employer' && !createUserDto.company) {
+      throw new BadRequestException(
+        'company field is required when creating employer account!',
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
       roundsOfHashing,
     );
 
+    const { account_type, ...restCreateUserDto } = createUserDto;
+
+    const accountType = await this.prisma.accountType.findFirst({
+      where: { name: account_type },
+    });
+
     createUserDto.password = hashedPassword;
 
     return this.prisma.user.create({
-      data: createUserDto,
+      data: {
+        ...restCreateUserDto,
+        type: {
+          connect: {
+            id: accountType.id,
+          },
+        },
+      },
     });
   }
 
@@ -30,6 +59,10 @@ export class UsersService {
 
   findOne(id: number) {
     return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email } });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
