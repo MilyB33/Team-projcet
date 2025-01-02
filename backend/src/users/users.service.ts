@@ -1,4 +1,3 @@
-// src/users/users.service.ts
 import {
   BadRequestException,
   ConflictException,
@@ -53,15 +52,18 @@ export class UsersService {
     });
   }
 
-  findAll() {
+  async findAll() {
     return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+  async findOne(id: number, options?: { type?: boolean }) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: { type: options?.type ?? false },
+    });
   }
 
-  findByEmail(email: string) {
+  async findByEmail(email: string) {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
@@ -79,7 +81,7 @@ export class UsersService {
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.prisma.user.delete({ where: { id } });
   }
 }

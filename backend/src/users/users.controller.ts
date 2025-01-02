@@ -21,7 +21,6 @@ import {
 
 import { UserEntity } from './entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-
 @Controller('users')
 @ApiTags('users')
 export class UsersController {
@@ -48,7 +47,7 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiOkResponse({ type: UserEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return new UserEntity(await this.usersService.findOne(id));
+    return new UserEntity(await this.usersService.findOne(id, { type: true }));
   }
 
   @Patch(':id')
