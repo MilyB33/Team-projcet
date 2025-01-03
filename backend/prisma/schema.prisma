@@ -32,13 +32,56 @@ model User {
   type       AccountType @relation(fields: [typeId], references: [id])
   typeId     Int
 
-  Workspace Workspace[]
+  workspaces   Workspace[]
+  own_projects Project[]
+  projects     ProjectUser[]
 }
 
 model Workspace {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
   created_by Int
-  createdAt  DateTime @default(now())
-  admin      User     @relation(fields: [created_by], references: [id])
+  createdAt  DateTime  @default(now())
+  projects   Project[]
+  admin      User      @relation(fields: [created_by], references: [id])
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  workspaceId Int
+  createdBy   Int
+  createdAt   DateTime      @default(now())
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+  admin       User          @relation(fields: [createdBy], references: [id])
+  members     ProjectUser[]
+  groups      Group[]
+}
+
+model ProjectUser {
+  id        Int                @id @default(autoincrement())
+  projectId Int
+  userId    Int
+  joinedAt  DateTime           @default(now())
+  project   Project            @relation(fields: [projectId], references: [id])
+  user      User               @relation(fields: [userId], references: [id])
+  groups    ProjectUserGroup[]
+}
+
+model Group {
+  id        Int                @id @default(autoincrement())
+  name      String
+  projectId Int
+  project   Project            @relation(fields: [projectId], references: [id])
+  members   ProjectUserGroup[]
+}
+
+model ProjectUserGroup {
+  id            Int         @id @default(autoincrement())
+  projectUserId Int
+  groupId       Int
+  joinedAt      DateTime    @default(now())
+  projectUser   ProjectUser @relation(fields: [projectUserId], references: [id])
+  group         Group       @relation(fields: [groupId], references: [id])
 }
