@@ -8,6 +8,8 @@ import { AddMemberDto } from './dto/add-member.dto';
 import { GroupsService } from 'src/groups/groups.service';
 import { AddGroupsDto } from './dto/add-groups.dto';
 import { UpdateGroupDto } from '../groups/dto/update-group.dto';
+import crypto from 'crypto';
+import { JoinProjectDto } from './dto/join-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -41,12 +43,15 @@ export class ProjectsService {
       );
     }
 
+    const accessCode = await this.generateAccessCode();
+
     const project = await this.prisma.project.create({
       data: {
         createdBy: userId,
         name: createProjectDto.name,
         description: createProjectDto.description,
         workspaceId: createProjectDto.workspaceId,
+        accessCode,
         groups: { createMany: { data: createProjectDto.groups || [] } },
       },
     });
@@ -58,6 +63,15 @@ export class ProjectsService {
     return this.prisma.project.update({
       where: { id },
       data: updateProjectDto,
+    });
+  }
+
+  async generateNewAccessCode(id: number) {
+    const accessCode = await this.generateAccessCode();
+
+    return this.prisma.project.update({
+      where: { id },
+      data: { accessCode },
     });
   }
 
@@ -117,6 +131,33 @@ export class ProjectsService {
     return await this.groupsService.findAll(projectId);
   }
 
+  async join(projectId: number, joinProjectDto: JoinProjectDto) {
+    const project = await this.findOne(projectId);
+
+    if (!project) {
+      throw new BadRequestException('Project not found');
+    }
+
+    if (project.accessCode !== joinProjectDto.accessCode) {
+      throw new BadRequestException('Not valid access code');
+    }
+
+    const user = await this.usersService.findOne(joinProjectDto.user);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const projectUser = await this.prisma.projectUser.create({
+      data: {
+        projectId: projectId,
+        userId: joinProjectDto.user,
+      },
+    });
+
+    return projectUser;
+  }
+
   async addMember(projectId: number, addMemberDto: AddMemberDto) {
     const project = await this.findOne(projectId);
 
@@ -149,5 +190,26 @@ export class ProjectsService {
 
   async findProjectMembers(projectId: number) {
     return this.prisma.projectUser.findMany({ where: { projectId } });
+  }
+
+  async findByAccessCode(accessCode: string) {
+    return this.prisma.project.findFirst({ where: { accessCode } });
+  }
+
+  private async generateAccessCode() {
+    let validAccessCode = false;
+    let accessCode = '';
+
+    while (!validAccessCode) {
+      accessCode = crypto.randomBytes(4).toString('hex');
+
+      const projectWithAccessCode = await this.findByAccessCode(accessCode);
+
+      if (projectWithAccessCode) continue;
+
+      validAccessCode = true;
+    }
+
+    return accessCode;
   }
 }

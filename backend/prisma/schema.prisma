@@ -52,6 +52,7 @@ model Project {
   description String
   workspaceId Int
   createdBy   Int
+  accessCode  String        @unique
   createdAt   DateTime      @default(now())
   workspace   Workspace     @relation(fields: [workspaceId], references: [id])
   admin       User          @relation(fields: [createdBy], references: [id])

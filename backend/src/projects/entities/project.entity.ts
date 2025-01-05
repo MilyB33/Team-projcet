@@ -30,6 +30,9 @@ export class ProjectEntity implements Project {
   createdAt: Date;
 
   @ApiProperty()
+  accessCode: string;
+
+  @ApiProperty()
   @Exclude()
   workspace: WorkspaceEntity;
 

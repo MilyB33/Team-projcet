@@ -27,6 +27,7 @@ import { AddGroupsDto } from './dto/add-groups.dto';
 import { UpdateGroupDto } from 'src/groups/dto/update-group.dto';
 import { ProjectUserEntity } from './entities/project-user.entity';
 import { AddMemberDto } from './dto/add-member.dto';
+import { JoinProjectDto } from './dto/join-project.dto';
 
 @ApiBearerAuth()
 @Controller('projects')
@@ -49,6 +50,14 @@ export class ProjectsController {
     return new ProjectEntity(project);
   }
 
+  @Post(':id/access_code')
+  @ApiOkResponse({ type: ProjectEntity })
+  async generateAccessCode(@Param('id', ParseIntPipe) id: number) {
+    const project = await this.projectsService.generateNewAccessCode(id);
+
+    return new ProjectEntity(project);
+  }
+
   @Patch(':id')
   @ApiOkResponse({ type: ProjectEntity })
   async update(
@@ -58,6 +67,17 @@ export class ProjectsController {
     const project = await this.projectsService.update(id, updateProjectDto);
 
     return new ProjectEntity(project);
+  }
+
+  @Post(':id/join')
+  @ApiCreatedResponse({ type: ProjectUserEntity })
+  async join(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() joinProjectDto: JoinProjectDto,
+  ) {
+    const member = await this.projectsService.join(id, joinProjectDto);
+
+    return new ProjectUserEntity(member);
   }
 
   @Delete('id')
