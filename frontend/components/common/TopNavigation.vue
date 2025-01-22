@@ -13,13 +13,18 @@
     ></template>
 
     <v-app-bar-title>
-      <div class="d-flex align-center ga-2">
-        <h3 class="text-blue">Clocker</h3>
-        <v-icon
-          color="blue"
-          icon="mdi-clock-time-nine-outline"
-        ></v-icon>
-      </div>
+      <NuxtLink
+        to="/"
+        class="text-decoration-none"
+      >
+        <div class="d-flex align-center ga-2">
+          <h3 class="text-blue">Clocker</h3>
+          <v-icon
+            color="blue"
+            icon="mdi-clock-time-nine-outline"
+          ></v-icon>
+        </div>
+      </NuxtLink>
     </v-app-bar-title>
 
     <div class="d-flex ga-2 px-2 align-center">
@@ -35,12 +40,7 @@
         :thickness="2"
       ></v-divider>
 
-      <v-btn
-        size="small"
-        icon="mdi-account"
-        variant="outlined"
-        color="blue"
-      ></v-btn>
+      <TopNavigationAccount />
     </div>
   </v-app-bar>
 </template>
