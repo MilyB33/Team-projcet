@@ -1,6 +1,5 @@
-import { Optional } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { AccountType } from 'src/constant';
 
 export class CreateUserDto {
@@ -14,8 +13,8 @@ export class CreateUserDto {
   @ApiProperty()
   last_name: string;
 
+  @IsOptional()
   @IsString()
-  @Optional()
   @ApiPropertyOptional()
   company?: string;
 

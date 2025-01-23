@@ -1,7 +1,8 @@
 import axios, { isAxiosError } from "axios";
+import { COOKIES } from "~/constant";
 
 export const useAxiosClient = () => {
-  const cookie = useCookie("bearer");
+  const cookie = useCookie(COOKIES.AUTH_TOKEN);
   const client = axios.create({ baseURL: "http://localhost:9000/api" });
 
   client.interceptors.response.use(
@@ -29,8 +30,11 @@ export const useAxiosClient = () => {
     axios.defaults.headers.common["Authorization"] = `bearer ${token}`;
   };
 
+  const isAuthToken = computed(() => !!cookie.value);
+
   return {
     client,
     setAuthToken,
+    isAuthToken,
   };
 };

@@ -48,30 +48,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useMutation } from "@tanstack/vue-query";
-import type { LoginRequest, LoginResponse } from "~/types";
-
 const isPasswordVisible = ref(false);
 
 const form = useForm({ validationSchema: signInTypedSchema });
 const { value: email, errorMessage: emailError } = useField<string>("email");
 const { value: password, errorMessage: passwordError } = useField<string>("password");
-
-const { client, setAuthToken } = useAxiosClient();
-const { snackbar } = useSnackbar();
-
-const { mutate: login, isPending: isLogging } = useMutation({
-  mutationFn: async (data: LoginRequest): Promise<LoginResponse> =>
-    (await client.post("http://localhost:9000/api/auth/login/", data)).data,
-  onSuccess: (response) => {
-    snackbar.success("Successfully logged in!");
-    setAuthToken(response.accessToken);
-    navigateTo("/");
-  },
-  onError: (error) => {
-    snackbar.error(error.message || "Something went wrong!");
-  },
-});
+const { login, isLogging } = useAuth();
 
 const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value;

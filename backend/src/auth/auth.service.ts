@@ -33,4 +33,10 @@ export class AuthService {
       user,
     };
   }
+
+  async me(token: string) {
+    const userId = this.jwtService.decode(token);
+
+    console.log(userId);
+  }
 }

@@ -38,11 +38,10 @@ export class UsersService {
       where: { name: account_type },
     });
 
-    createUserDto.password = hashedPassword;
-
     return this.prisma.user.create({
       data: {
         ...restCreateUserDto,
+        password: hashedPassword,
         type: {
           connect: {
             id: accountType.id,
