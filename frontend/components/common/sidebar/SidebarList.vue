@@ -9,13 +9,23 @@
       value="home"
     ></v-list-item>
     <v-list-item
-      prepend-icon="mdi-account"
-      title="My Account"
+      prepend-icon="mdi-clock-fast"
+      title="Time tracker"
       value="account"
     ></v-list-item>
     <v-list-item
+      prepend-icon="mdi-file"
+      title="My Projects"
+      value="account"
+    ></v-list-item>
+    <v-list-item
+      prepend-icon="mdi-chart-bar"
+      title="Reports"
+      value="users"
+    ></v-list-item>
+    <v-list-item
       prepend-icon="mdi-account-group-outline"
-      title="Users"
+      title="Team"
       value="users"
     ></v-list-item>
   </v-list>

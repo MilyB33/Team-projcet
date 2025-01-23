@@ -31,8 +31,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async me(@Headers() headers: Request['headers']) {
-    const authToken = headers['authorization'];
+    const authToken: string = headers['authorization'];
 
-    await this.authService.me(authToken);
+    const token = authToken.replace('bearer', '').trim();
+
+    const user = await this.authService.me(token);
+
+    return new UserEntity(user);
   }
 }

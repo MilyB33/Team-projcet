@@ -3,12 +3,14 @@
 <template>
   <v-app>
     <SnackbarProvider>
-      <AppWrapper>
-        <NuxtLayout>
-          <NuxtRouteAnnouncer />
-          <NuxtPage />
-        </NuxtLayout>
-      </AppWrapper>
+      <AxiosProvider>
+        <AppWrapper>
+          <NuxtLayout>
+            <NuxtRouteAnnouncer />
+            <NuxtPage />
+          </NuxtLayout>
+        </AppWrapper>
+      </AxiosProvider>
     </SnackbarProvider>
   </v-app>
 </template>

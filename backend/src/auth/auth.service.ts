@@ -2,21 +2,22 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from './../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthEntity } from './entity/auth.entity';
 import * as bcrypt from 'bcrypt';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
     private jwtService: JwtService,
+    private usersService: UsersService,
   ) {}
 
   async login(email: string, password: string): Promise<AuthEntity> {
-    const user = await this.prisma.user.findUnique({ where: { email: email } });
+    const user = await this.usersService.findByEmail(email);
 
     if (!user) {
       throw new NotFoundException(`No user found for email: ${email}`);
@@ -35,8 +36,15 @@ export class AuthService {
   }
 
   async me(token: string) {
-    const userId = this.jwtService.decode(token);
+    const decodedToken: { userId: number } | null =
+      this.jwtService.decode(token);
 
-    console.log(userId);
+    if (!decodedToken) {
+      throw new BadRequestException('Bad token');
+    }
+
+    const user = await this.usersService.findOne(decodedToken.userId);
+
+    return user;
   }
 }
