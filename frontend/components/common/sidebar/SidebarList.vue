@@ -2,31 +2,60 @@
   <v-list
     density="compact"
     nav
+    class="d-flex flex-column ga-1"
   >
-    <v-list-item
-      prepend-icon="mdi-home-city"
-      title="Home"
-      value="home"
-    ></v-list-item>
-    <v-list-item
-      prepend-icon="mdi-clock-fast"
-      title="Time tracker"
-      value="account"
-    ></v-list-item>
-    <v-list-item
+    <NuxtLink
+      to="/"
+      class="text-black"
+    >
+      <v-btn
+        class="w-100 justify-start"
+        variant="text"
+        prepend-icon="mdi-home-city"
+        >Home</v-btn
+      >
+    </NuxtLink>
+    <NuxtLink
+      to="/tracker"
+      class="text-black"
+    >
+      <v-btn
+        class="w-100 justify-start"
+        variant="text"
+        prepend-icon="mdi-clock-fast"
+        >Time Tracker</v-btn
+      >
+    </NuxtLink>
+
+    <NuxtLink
+      to="/workspaces"
+      class="text-black"
+    >
+      <v-btn
+        class="w-100 justify-start"
+        variant="text"
+        prepend-icon="mdi-application-settings-outline"
+        >Workspaces</v-btn
+      >
+    </NuxtLink>
+
+    <v-btn
+      class="w-100 justify-start"
+      variant="text"
       prepend-icon="mdi-file"
-      title="My Projects"
-      value="account"
-    ></v-list-item>
-    <v-list-item
+      >My Projects</v-btn
+    >
+    <v-btn
+      class="w-100 justify-start"
+      variant="text"
       prepend-icon="mdi-chart-bar"
-      title="Reports"
-      value="users"
-    ></v-list-item>
-    <v-list-item
+      >Reports</v-btn
+    >
+    <v-btn
+      class="w-100 justify-start"
+      variant="text"
       prepend-icon="mdi-account-group-outline"
-      title="Team"
-      value="users"
-    ></v-list-item>
+      >Team</v-btn
+    >
   </v-list>
 </template>

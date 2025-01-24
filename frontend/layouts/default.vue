@@ -3,7 +3,12 @@
     <TopNavigation :toggleSidebar="toggleSidebar" />
     <Sidebar :isSidebarOpen="isSidebarOpen" />
     <v-main>
-      <slot />
+      <div
+        class="pa-4 h-100"
+        style="background-color: #e7ecef"
+      >
+        <slot />
+      </div>
     </v-main>
   </v-layout>
 </template>
