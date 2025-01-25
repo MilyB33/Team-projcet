@@ -4,4 +4,5 @@ export const COOKIES = {
 
 export const API_KEY = {
   USER: "USER",
+  WORKSPACES: "WORKSPACES",
 };

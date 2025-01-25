@@ -1,6 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { API_KEY } from "~/constant";
-import type { LoginRequest, LoginResponse, CreateUserRequest, CreateUserResponse } from "~/types";
+import type {
+  LoginRequest,
+  LoginResponse,
+  CreateUserRequest,
+  CreateUserResponse,
+  User,
+} from "~/types";
 
 export const useAuth = () => {
   const { client, setAuthToken, isAuthToken } = useAxiosClient();
@@ -35,7 +41,7 @@ export const useAuth = () => {
 
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: [API_KEY.USER],
-    queryFn: () => client.get("/auth/me/"),
+    queryFn: async (): Promise<User> => (await client.get("/auth/me/")).data,
     enabled: isAuthToken,
     retry: 0,
     retryOnMount: false,

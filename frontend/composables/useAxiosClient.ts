@@ -1,8 +1,8 @@
-import axios, { isAxiosError } from "axios";
+import axios, { isAxiosError, type AxiosInstance } from "axios";
 import { COOKIES } from "~/constant";
 
 type AxiosClientContext = {
-  client: axios.AxiosInstance;
+  client: AxiosInstance;
   isAuthToken: boolean;
   setAuthToken: (token: string) => void;
 };
