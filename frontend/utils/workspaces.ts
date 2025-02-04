@@ -35,7 +35,7 @@ export const prepareTableData = (workspaces: Workspace[]) => {
       id: workspace.id,
       lp: index + 1,
       name: workspace.name,
-      projects: 2,
+      projects: workspace.projectsCount,
       creationDate: new Date(workspace.createdAt).toLocaleDateString(),
     };
   });

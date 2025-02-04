@@ -4,58 +4,51 @@
     nav
     class="d-flex flex-column ga-1"
   >
-    <NuxtLink
+    <NavigationLink
+      icon="mdi-home-city"
       to="/"
-      class="text-black"
     >
-      <v-btn
-        class="w-100 justify-start"
-        variant="text"
-        prepend-icon="mdi-home-city"
-        >Home</v-btn
-      >
-    </NuxtLink>
-    <NuxtLink
+      Home
+    </NavigationLink>
+
+    <NavigationLink
+      icon="mdi-clock-fast"
       to="/tracker"
-      class="text-black"
     >
-      <v-btn
-        class="w-100 justify-start"
-        variant="text"
-        prepend-icon="mdi-clock-fast"
-        >Time Tracker</v-btn
-      >
-    </NuxtLink>
+      Time tracker
+    </NavigationLink>
 
-    <NuxtLink
+    <NavigationLink
+      icon="mdi-application-settings-outline"
       to="/workspaces"
-      class="text-black"
+      v-if="isEmployer"
     >
-      <v-btn
-        class="w-100 justify-start"
-        variant="text"
-        prepend-icon="mdi-application-settings-outline"
-        >Workspaces</v-btn
-      >
-    </NuxtLink>
+      Workspaces
+    </NavigationLink>
 
-    <v-btn
-      class="w-100 justify-start"
-      variant="text"
-      prepend-icon="mdi-file"
-      >My Projects</v-btn
+    <NavigationLink
+      icon="mdi-file"
+      to="/projects"
     >
-    <v-btn
-      class="w-100 justify-start"
-      variant="text"
-      prepend-icon="mdi-chart-bar"
-      >Reports</v-btn
+      My Projects
+    </NavigationLink>
+
+    <NavigationLink
+      icon="mdi-chart-bar"
+      to="/reports"
     >
-    <v-btn
-      class="w-100 justify-start"
-      variant="text"
-      prepend-icon="mdi-account-group-outline"
-      >Team</v-btn
+      Reports
+    </NavigationLink>
+
+    <NavigationLink
+      icon="mdi-account-group-outline"
+      to="/team"
     >
+      Team
+    </NavigationLink>
   </v-list>
 </template>
+
+<script lang="ts" setup>
+const { isEmployer } = useUser();
+</script>

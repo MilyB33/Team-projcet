@@ -23,4 +23,8 @@ export class WorkspaceEntity implements Workspace {
   @ApiProperty()
   @Exclude()
   admin: UserEntity;
+
+  @ApiProperty()
+  @Exclude()
+  projectsCount: number;
 }

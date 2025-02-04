@@ -22,8 +22,8 @@ provide("snackbar", {
       color.value = "success";
       show.value = true;
     },
-    error: (_message: string) => {
-      message.value = _message;
+    error: (_message?: string) => {
+      message.value = _message || "Something went wrong. Try again!";
       color.value = "error";
       show.value = true;
     },

@@ -43,6 +43,7 @@ export type Workspace = {
   created_by: number;
   name: string;
   admin: User;
+  projectsCount: number;
 };
 
 export type CreateWorkspaceRequest = {
@@ -53,4 +54,51 @@ export type CreateWorkspaceRequest = {
 export type UpdateWorkspaceRequest = {
   name: string;
   id: number;
+};
+
+export type Group = {
+  id: number;
+  name: string;
+  projectId: number;
+  project: Project;
+};
+
+export type ProjectGroup = {
+  id: number;
+  projectUserId: number;
+  groupId: number;
+  joinedAt: Date;
+  projectUser: ProjectUser;
+  group: Group[];
+};
+
+export type ProjectUser = {
+  id: number;
+  projectId: number;
+  userId: number;
+  joinedAt: Date;
+  project: Project;
+  user: User;
+  groups: ProjectGroup[];
+};
+
+export type Project = {
+  id: number;
+  name: string;
+  description: string;
+  workspaceId: number;
+  createdBy: number;
+  createdAt: Date;
+  accessCode: string;
+  workspace: Omit<Workspace, "admin" | "projectCount">;
+  admin: User;
+  members: ProjectUser[];
+  groups: ProjectGroup[];
+};
+
+export type CreateProjectRequest = {
+  name: string;
+  description?: string;
+  workspaceId: number;
+  groups: { name: string }[];
 };

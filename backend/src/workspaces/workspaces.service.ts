@@ -28,6 +28,15 @@ export class WorkspacesService {
       throw new BadRequestException('You can create only 5 workspaces');
     }
 
+    const workspaceWithSameName = await this.findByNameAndCreator(
+      createWorkspaceDto.name,
+      user.id,
+    );
+
+    if (workspaceWithSameName.length) {
+      throw new BadRequestException('Workspace with this name already exist');
+    }
+
     return this.prisma.workspace.create({
       data: {
         created_by: createWorkspaceDto.user_id,
@@ -39,9 +48,43 @@ export class WorkspacesService {
   async findByCreator(id: number) {
     const workspaces = await this.prisma.workspace.findMany({
       where: { created_by: id },
+      select: {
+        id: true,
+        createdAt: true,
+        created_by: true,
+        name: true,
+        _count: {
+          select: { projects: true },
+        },
+      },
     });
 
-    return workspaces;
+    return workspaces.map((workspace) => {
+      const { _count, ...rest } = workspace;
+
+      return { ...rest, projectsCount: _count.projects };
+    });
+  }
+
+  async findByNameAndCreator(name: string, creator: number) {
+    const workspaces = await this.prisma.workspace.findMany({
+      where: { name, created_by: creator },
+      select: {
+        id: true,
+        createdAt: true,
+        created_by: true,
+        name: true,
+        _count: {
+          select: { projects: true },
+        },
+      },
+    });
+
+    return workspaces.map((workspace) => {
+      const { _count, ...rest } = workspace;
+
+      return { ...rest, projectsCount: _count.projects };
+    });
   }
 
   async update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
@@ -56,8 +99,21 @@ export class WorkspacesService {
   }
 
   async findOne(id: number) {
-    return this.prisma.workspace.findUnique({
+    const workspace = await this.prisma.workspace.findUnique({
       where: { id },
+      select: {
+        id: true,
+        createdAt: true,
+        created_by: true,
+        name: true,
+        _count: {
+          select: { projects: true },
+        },
+      },
     });
+
+    const { _count, ...rest } = workspace;
+
+    return { ...rest, projectsCount: _count.projects };
   }
 }

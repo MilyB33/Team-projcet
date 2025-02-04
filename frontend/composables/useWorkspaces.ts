@@ -20,7 +20,7 @@ export const useWorkspaces = () => {
       queryClient.invalidateQueries({ queryKey: [API_KEY.WORKSPACES] });
     },
     onError: () => {
-      snackbar.error("Something went wrong. Try again!");
+      snackbar.error();
     },
   });
 
@@ -31,7 +31,7 @@ export const useWorkspaces = () => {
       queryClient.invalidateQueries({ queryKey: [API_KEY.WORKSPACES] });
     },
     onError: () => {
-      snackbar.error("Something went wrong. Try again!");
+      snackbar.error();
     },
   });
 
@@ -43,7 +43,7 @@ export const useWorkspaces = () => {
       queryClient.invalidateQueries({ queryKey: [API_KEY.WORKSPACES] });
     },
     onError: () => {
-      snackbar.error("Something went wrong. Try again!");
+      snackbar.error();
     },
   });
 

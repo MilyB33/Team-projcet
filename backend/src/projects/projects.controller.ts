@@ -80,14 +80,14 @@ export class ProjectsController {
     return new ProjectUserEntity(member);
   }
 
-  @Delete('id')
+  @Delete(':id')
   @ApiOkResponse({ type: ProjectEntity })
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.projectsService.remove(id);
     return { message: 'Project was successfully removed' };
   }
 
-  @Get('id')
+  @Get(':id')
   @ApiOkResponse({ type: ProjectEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const project = await this.projectsService.findOne(id);
@@ -161,5 +161,12 @@ export class ProjectsController {
     const members = await this.projectsService.findProjectMembers(id);
 
     return members.map((member) => new ProjectUserEntity(member));
+  }
+
+  @Get()
+  @ApiOkResponse({ type: ProjectEntity, isArray: true })
+  async findAllProjects(@User() user: PrismaUser) {
+    const projects = await this.projectsService.findByCreator(user.id);
+    return projects.map((project) => new ProjectEntity(project));
   }
 }

@@ -8,7 +8,7 @@ import { AddMemberDto } from './dto/add-member.dto';
 import { GroupsService } from 'src/groups/groups.service';
 import { AddGroupsDto } from './dto/add-groups.dto';
 import { UpdateGroupDto } from '../groups/dto/update-group.dto';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import { JoinProjectDto } from './dto/join-project.dto';
 
 @Injectable()
@@ -82,12 +82,14 @@ export class ProjectsService {
   async findOne(id: number) {
     return this.prisma.project.findUnique({
       where: { id },
+      include: { workspace: true },
     });
   }
 
   async findByCreator(id: number) {
     const projects = await this.prisma.project.findMany({
       where: { createdBy: id },
+      include: { workspace: true },
     });
 
     return projects;
@@ -193,7 +195,10 @@ export class ProjectsService {
   }
 
   async findByAccessCode(accessCode: string) {
-    return this.prisma.project.findFirst({ where: { accessCode } });
+    return this.prisma.project.findFirst({
+      where: { accessCode },
+      include: { workspace: true },
+    });
   }
 
   private async generateAccessCode() {
