@@ -73,17 +73,23 @@ app.delete('/tasks/:id', (req, res) => {
     }
   });
 });
-// Endpoint do edytowania zadania
 app.put('/tasks/:id', (req, res) => {
   const { id } = req.params;
   const { description, project, start_time, end_time, date } = req.body;
 
-  // Oblicz nowy czas trwania
-  const startDate = new Date(`${date} ${start_time}`);
-  const endDate = new Date(`${date} ${end_time}`);
-  const durationInSeconds = Math.floor((endDate - startDate) / 1000);
+  const convertToDate = (dateTime) => {
+    const [datePart, timePart] = dateTime.split(' ');
+    const [day, month, year] = datePart.split('-').map(Number);
+    const [hours, minutes, seconds] = timePart.split(':').map(Number);
 
-  // Zaokrąglenie w górę do pełnej minuty
+    return new Date(year, month - 1, day, hours, minutes, seconds);
+  };
+
+  const startDate = convertToDate(start_time);
+  const endDate = convertToDate(end_time);
+
+  const durationInSeconds = Math.floor((endDate - startDate) / 1000);
+  
   const roundedDurationInMinutes = Math.ceil(durationInSeconds / 60);
 
   const hours = Math.floor(roundedDurationInMinutes / 60);

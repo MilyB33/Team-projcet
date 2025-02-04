@@ -44,16 +44,16 @@
         :key="day"
       >
         <v-list-item class="day-item">
-          <v-list-item-content>
+          <v-list-item>
             <v-list-item-title class="headline">{{ day }}</v-list-item-title>
-          </v-list-item-content>
+          </v-list-item>
         </v-list-item>
 
         <v-list-item
           v-for="entry in filteredEntries(day)"
           :key="entry.id"
         >
-          <v-list-item-content>
+          <v-list-item>
             <div class="entry-row d-flex">
               <div class="entry-description ellipsis">
                 <v-tooltip bottom>
@@ -104,7 +104,7 @@
                 </v-list>
               </v-menu>
             </div>
-          </v-list-item-content>
+          </v-list-item>
         </v-list-item>
       </v-list-item-group>
     </v-list>
@@ -172,7 +172,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Delete Task Dialog -->
     <v-dialog
       v-model="dialogDelete"
       max-width="400px"
@@ -291,7 +290,6 @@ export default {
   if (!datetime) return "Brak danych";
   const date = new Date(datetime);
 
-  // Formatowanie czasu w formacie hh:mm:ss
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
@@ -351,13 +349,11 @@ export default {
       this.editingTask = null;
     },
 
-    // Potwierdzenie usunięcia zadania
     confirmDelete(id) {
       this.dialogDelete = true; // Pokaż okno potwierdzenia
       this.taskToDelete = id; // Zapamiętaj ID zadania
     },
 
-    // Usuwanie zadania
     deleteTask() {
       axios
         .delete(`http://localhost:3001/tasks/${this.taskToDelete}`)
@@ -373,7 +369,6 @@ export default {
         .catch((err) => console.error("Błąd usuwania zadania:", err));
     },
 
-    // Anulowanie usuwania
     cancelDelete() {
       this.dialogDelete = false; // Zamknięcie okna potwierdzenia usuwania
       this.taskToDelete = null; // Resetowanie ID zadania
