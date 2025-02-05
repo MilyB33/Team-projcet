@@ -12,7 +12,10 @@
       </NuxtLink>
     </template>
     <template v-slot:item.accessCode="{ item }">
-      <AccessCode :code="item.accessCode" />
+      <AccessCode
+        :code="item.accessCode"
+        :id="item.id"
+      />
     </template>
   </v-data-table>
 </template>

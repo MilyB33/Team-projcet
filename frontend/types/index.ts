@@ -102,3 +102,7 @@ export type CreateProjectRequest = {
   workspaceId: number;
   groups: { name: string }[];
 };
+
+export type UpdateProjectRequest = Partial<Omit<CreateProjectRequest, "workspaceId">> & {
+  id: number;
+};

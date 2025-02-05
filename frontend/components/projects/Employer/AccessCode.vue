@@ -4,6 +4,8 @@
       icon="mdi-refresh"
       variant="plain"
       size="small"
+      @click="onGenerate"
+      :disabled="generatingAccessCode"
     ></v-btn>
 
     <v-divider vertical></v-divider>
@@ -13,6 +15,7 @@
       variant="plain"
       size="small"
       prepend-icon="mdi-clipboard"
+      :disabled="generatingAccessCode"
     >
       {{ code }}
     </v-btn>
@@ -22,11 +25,17 @@
 <script lang="ts" setup>
 type CopyCodeToClipboardProps = {
   code: string;
+  id: number;
 };
 
 const props = defineProps<CopyCodeToClipboardProps>();
 
 const { snackbar } = useSnackbar();
+const { generateAccessCode, generatingAccessCode } = useProject();
+
+const onGenerate = () => {
+  generateAccessCode(props.id);
+};
 
 const onCopy = async () => {
   try {

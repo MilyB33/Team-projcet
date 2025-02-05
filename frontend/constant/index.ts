@@ -6,5 +6,4 @@ export const API_KEY = {
   USER: "USER",
   WORKSPACES: "WORKSPACES",
   PROJECTS: "PROJECTS",
-  PROJECT: "PROJECT",
 };
