@@ -21,6 +21,19 @@ export const useProject = () => {
     enabled: !!projectId,
   });
 
+  const { mutateAsync: createProject, isPending: creatingProject } = useMutation({
+    mutationFn: async (data: CreateProjectRequest): Promise<Project> =>
+      (await client.post("/projects/", data)).data,
+    onSuccess: () => {
+      snackbar.success("Successfully created project.");
+      queryClient.invalidateQueries({ queryKey: [API_KEY.WORKSPACES] });
+      queryClient.invalidateQueries({ queryKey: [API_KEY.PROJECTS] });
+    },
+    onError: () => {
+      snackbar.error();
+    },
+  });
+
   const { mutateAsync: generateAccessCode, isPending: generatingAccessCode } = useMutation({
     mutationFn: async (id: number): Promise<Project> =>
       (await client.post(`/projects/${id}/access_code/`)).data,
@@ -33,7 +46,7 @@ export const useProject = () => {
     },
   });
 
-  const { mutate: deleteProject, isPending: deletingProject } = useMutation({
+  const { mutateAsync: deleteProject, isPending: deletingProject } = useMutation({
     mutationFn: async (id: number): Promise<void> => (await client.delete(`/projects/${id}/`)).data,
     onSuccess: () => {
       invalidateProjects();
@@ -59,9 +72,11 @@ export const useProject = () => {
   return {
     project,
     loadingProject,
+    creatingProject,
     generatingAccessCode,
     deletingProject,
     updatingProject,
+    createProject,
     generateAccessCode,
     deleteProject,
     updateProject,

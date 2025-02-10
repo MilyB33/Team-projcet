@@ -31,9 +31,11 @@ type EmployerProjectHeaderProps = {
 const props = defineProps<EmployerProjectHeaderProps>();
 
 const { deleteProject, deletingProject } = useProject();
+const router = useRouter();
 
 const onDelete = () => {
   deleteProject(props.project.id);
+  router.push("/projects");
 };
 const formattedCreatedAt = moment(props.project.createdAt).format("MMMM Do YYYY"); // Format the date
 </script>

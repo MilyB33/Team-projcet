@@ -28,6 +28,11 @@
       v-if="project && !loadingProject"
       :project="project"
     />
+
+    <EmployerProjectMembers
+      v-if="project && !loadingProject"
+      :project="project"
+    />
   </div>
 </template>
 

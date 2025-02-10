@@ -21,6 +21,7 @@
         v-model="accessCode"
         :error-messages="accessCodeError"
       ></v-text-field>
+
       <v-text-field
         label="Project name"
         id="project-name"

@@ -24,13 +24,13 @@ export class ProjectUserEntity implements ProjectUser {
 
   @ApiProperty()
   @Exclude()
-  project: ProjectEntity;
+  project?: ProjectEntity;
 
   @ApiProperty()
   @Exclude()
-  user: UserEntity;
+  user?: Pick<UserEntity, 'id' | 'first_name' | 'last_name' | 'email'>;
 
   @ApiProperty()
   @Exclude()
-  groups: ProjectUserGroupEntity[];
+  groups?: ProjectUserGroupEntity[];
 }

@@ -3,7 +3,9 @@
     <template v-if="workspaces.length">
       <h2>Looks like you don't have any projects yet.</h2>
 
-      <CreateProjectModal :workspaces="workspaces" />
+      <div class="mt-4">
+        <CreateProjectModal :workspaces="workspaces" />
+      </div>
     </template>
     <template v-else>
       <h2>Looks like you don't have any workspace yet.</h2>

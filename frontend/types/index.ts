@@ -78,7 +78,7 @@ export type ProjectUser = {
   userId: number;
   joinedAt: Date;
   project: Project;
-  user: User;
+  user: Pick<User, "id" | "first_name" | "last_name" | "email">;
   groups: ProjectGroup[];
 };
 

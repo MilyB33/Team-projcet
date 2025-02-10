@@ -1,6 +1,15 @@
 <template>
   <div class="d-flex flex-column ga-4 h-100">
-    <h2>Projects</h2>
+    <div class="d-flex align-center">
+      <h2>Projects</h2>
+
+      <div class="ml-auto">
+        <CreateProjectModal
+          v-if="workspaces"
+          :workspaces="workspaces"
+        />
+      </div>
+    </div>
 
     <div
       class="self-center mx-auto my-auto"

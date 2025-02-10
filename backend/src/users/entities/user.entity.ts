@@ -31,7 +31,7 @@ export class UserEntity implements User {
 
   @ApiProperty()
   @Exclude()
-  type: AccountTypeEntity;
+  type?: AccountTypeEntity;
 
   @ApiProperty()
   email: string;

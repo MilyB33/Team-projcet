@@ -20,6 +20,22 @@ export class ProjectsService {
     private readonly groupsService: GroupsService,
   ) {}
 
+  private readonly PROJECT_INCLUDE = {
+    workspace: true,
+    members: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+          },
+        },
+      },
+    },
+  };
+
   async create(userId: number, createProjectDto: CreateProjectDto) {
     const user = await this.usersService.findOne(userId, { type: true });
 
@@ -51,6 +67,7 @@ export class ProjectsService {
         name: createProjectDto.name,
         description: createProjectDto.description,
         workspaceId: createProjectDto.workspaceId,
+        members: { create: { userId } },
         accessCode,
         groups: { createMany: { data: createProjectDto.groups || [] } },
       },
@@ -82,14 +99,14 @@ export class ProjectsService {
   async findOne(id: number) {
     return this.prisma.project.findUnique({
       where: { id },
-      include: { workspace: true },
+      include: this.PROJECT_INCLUDE,
     });
   }
 
   async findByCreator(id: number) {
     const projects = await this.prisma.project.findMany({
       where: { createdBy: id },
-      include: { workspace: true },
+      include: this.PROJECT_INCLUDE,
     });
 
     return projects;
@@ -197,7 +214,7 @@ export class ProjectsService {
   async findByAccessCode(accessCode: string) {
     return this.prisma.project.findFirst({
       where: { accessCode },
-      include: { workspace: true },
+      include: this.PROJECT_INCLUDE,
     });
   }
 

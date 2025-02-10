@@ -4,11 +4,7 @@
     v-model="dialog"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        class="mt-4"
-        v-bind="activatorProps"
-        >Create Project</v-btn
-      >
+      <v-btn v-bind="activatorProps">Create Project</v-btn>
     </template>
 
     <template v-slot:default="{ isActive }">
@@ -92,7 +88,7 @@ const { value: description, errorMessage: descriptionError } = useField<string>(
 const { value: workspace, errorMessage: workspaceError } = useField<number>("workspace");
 const { value: groups, errorMessage: groupsError } = useField<string[]>("groups");
 
-const { createProject, creatingProject } = useProjects();
+const { createProject, creatingProject } = useProject();
 const { user } = useUser();
 
 const dialog = ref(false);

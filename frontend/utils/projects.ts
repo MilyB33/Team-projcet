@@ -74,3 +74,50 @@ export const prepareProjectsTableData = (projects: Project[]) => {
     };
   });
 };
+
+export const projectMembersHeaders = [
+  {
+    title: "Lp.",
+    sortable: false,
+    key: "lp",
+  },
+  {
+    title: "First name",
+    sortable: false,
+    key: "firstName",
+  },
+  {
+    title: "Last name",
+    sortable: false,
+    key: "lastName",
+  },
+  {
+    title: "Email",
+    sortable: false,
+    key: "email",
+  },
+  {
+    title: "Joined at",
+    sortable: false,
+    key: "joinedDate",
+  },
+  {
+    title: "Actions",
+    sortable: false,
+    key: "actions",
+  },
+] as const;
+
+export const prepareProjectsMembersData = (members: Project["members"]) => {
+  return members.map((member, index) => {
+    return {
+      id: member.id,
+      userId: member.user.id,
+      lp: index + 1,
+      firstName: member.user.first_name,
+      lastName: member.user.last_name,
+      email: member.user.email,
+      joinedDate: member.joinedAt,
+    };
+  });
+};
