@@ -9,8 +9,9 @@ type AxiosClientContext = {
 };
 
 export const useInitializeAxiosClient = () => {
+  const runtimeConfig = useRuntimeConfig();
   const cookie = useCookie(COOKIES.AUTH_TOKEN);
-  const client = axios.create({ baseURL: "http://localhost:9000/api" });
+  const client = axios.create({ baseURL: runtimeConfig.public.API_URL });
   const isClientTokenSet = ref(false);
 
   client.interceptors.response.use(
