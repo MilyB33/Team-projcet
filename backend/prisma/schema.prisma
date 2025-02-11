@@ -69,6 +69,8 @@ model ProjectUser {
   project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user      User               @relation(fields: [userId], references: [id])
   groups    ProjectUserGroup[]
+
+  @@unique([projectId, userId])
 }
 
 model Group {

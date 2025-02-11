@@ -9,7 +9,7 @@ import { GroupsService } from 'src/groups/groups.service';
 import { AddGroupsDto } from './dto/add-groups.dto';
 import { UpdateGroupDto } from '../groups/dto/update-group.dto';
 import * as crypto from 'crypto';
-import { JoinProjectDto } from './dto/join-project.dto';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -103,12 +103,37 @@ export class ProjectsService {
     });
   }
 
+  async findUserProjects(user: UserEntity) {
+    // TODO: change this to base on type name rather id
+    const isEmployer = user.typeId === 2;
+    const isStandard = user.typeId === 1;
+
+    if (isEmployer) {
+      return await this.findByCreator(user.id);
+    }
+
+    if (isStandard) {
+      return await this.findByMember(user.id);
+    }
+
+    return [];
+  }
+
   async findByCreator(id: number) {
     const projects = await this.prisma.project.findMany({
       where: { createdBy: id },
       include: this.PROJECT_INCLUDE,
     });
 
+    return projects;
+  }
+
+  async findByMember(id: number) {
+    const projects = await this.prisma.project.findMany({
+      where: { members: { some: { userId: id } } },
+      include: this.PROJECT_INCLUDE,
+    });
+    console.log(projects);
     return projects;
   }
 
@@ -150,31 +175,51 @@ export class ProjectsService {
     return await this.groupsService.findAll(projectId);
   }
 
-  async join(projectId: number, joinProjectDto: JoinProjectDto) {
-    const project = await this.findOne(projectId);
+  async join(accessCode: string, user: UserEntity) {
+    const project = await this.findByAccessCode(accessCode);
 
     if (!project) {
-      throw new BadRequestException('Project not found');
+      throw new BadRequestException('Invalid access code');
     }
-
-    if (project.accessCode !== joinProjectDto.accessCode) {
-      throw new BadRequestException('Not valid access code');
-    }
-
-    const user = await this.usersService.findOne(joinProjectDto.user);
 
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
+    if (project.members.some((member) => member.user.id === user.id)) {
+      throw new BadRequestException('User already joined the project.');
+    }
+
     const projectUser = await this.prisma.projectUser.create({
       data: {
-        projectId: projectId,
-        userId: joinProjectDto.user,
+        projectId: project.id,
+        userId: user.id,
       },
     });
 
     return projectUser;
+  }
+
+  async leave(id: number, user: UserEntity) {
+    const project = await this.findOne(id);
+
+    if (!project) {
+      throw new BadRequestException('Project not found.');
+    }
+
+    const isMember = project.members.some(
+      (member) => member.userId === user.id,
+    );
+
+    if (!isMember) {
+      throw new BadRequestException('user is not a member of the project.');
+    }
+
+    const projectUser = await this.prisma.projectUser.findFirst({
+      where: { userId: user.id, projectId: id },
+    });
+
+    await this.prisma.projectUser.delete({ where: { id: projectUser.id } });
   }
 
   async addMember(projectId: number, addMemberDto: AddMemberDto) {

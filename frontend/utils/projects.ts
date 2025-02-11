@@ -1,4 +1,5 @@
-import type { CreateProjectRequest, Project, Workspace } from "~/types";
+import moment from "moment";
+import type { CreateProjectRequest, Project, User, Workspace } from "~/types";
 
 export const prepareWorkspacesItems = (workspaces: Workspace[]) => {
   return workspaces.map((workspace) => ({
@@ -67,7 +68,7 @@ export const prepareProjectsTableData = (projects: Project[]) => {
       id: project.id,
       lp: index + 1,
       name: project.name,
-      members: 1,
+      members: project.members.length,
       creationDate: new Date(project.createdAt).toLocaleDateString(),
       workspace: project.workspace.name,
       accessCode: project.accessCode,
@@ -117,7 +118,49 @@ export const prepareProjectsMembersData = (members: Project["members"]) => {
       firstName: member.user.first_name,
       lastName: member.user.last_name,
       email: member.user.email,
-      joinedDate: member.joinedAt,
+      joinedDate: moment(member.joinedAt).format("MMMM Do YYYY"),
+    };
+  });
+};
+
+export const employeeProjectsTableHeaders = [
+  {
+    title: "Lp.",
+    sortable: false,
+    key: "lp",
+  },
+  {
+    title: "Name",
+    sortable: false,
+    key: "name",
+  },
+  {
+    title: "Members count",
+    sortable: false,
+    key: "members",
+  },
+  {
+    title: "Joined at",
+    sortable: false,
+    key: "joinedAt",
+  },
+  {
+    title: "Actions",
+    sortable: false,
+    key: "actions",
+  },
+];
+
+export const prepareEmployeeProjectsTableData = (projects: Project[], user: User) => {
+  return projects.map((project, index) => {
+    const joinedAt = project.members.find((member) => member.userId === user.id)?.joinedAt;
+
+    return {
+      id: project.id,
+      lp: index + 1,
+      name: project.name,
+      members: project.members.length,
+      joinedAt: moment(joinedAt).format("MMMM Do YYYY"),
     };
   });
 };

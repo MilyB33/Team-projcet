@@ -69,15 +69,22 @@ export class ProjectsController {
     return new ProjectEntity(project);
   }
 
-  @Post(':id/join')
+  @Post('join')
   @ApiCreatedResponse({ type: ProjectUserEntity })
-  async join(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() joinProjectDto: JoinProjectDto,
-  ) {
-    const member = await this.projectsService.join(id, joinProjectDto);
+  async join(@User() user: PrismaUser, @Body() joinProjectDto: JoinProjectDto) {
+    const member = await this.projectsService.join(
+      joinProjectDto.accessCode,
+      user,
+    );
 
     return new ProjectUserEntity(member);
+  }
+
+  @Delete(':id/leave')
+  @ApiOkResponse({ type: String })
+  async leave(@Param('id', ParseIntPipe) id: number, @User() user) {
+    await this.projectsService.leave(id, user);
+    return { message: 'Successfully left the project.' };
   }
 
   @Delete(':id')
@@ -166,7 +173,8 @@ export class ProjectsController {
   @Get()
   @ApiOkResponse({ type: ProjectEntity, isArray: true })
   async findAllProjects(@User() user: PrismaUser) {
-    const projects = await this.projectsService.findByCreator(user.id);
+    const projects = await this.projectsService.findUserProjects(user);
+
     return projects.map((project) => new ProjectEntity(project));
   }
 }

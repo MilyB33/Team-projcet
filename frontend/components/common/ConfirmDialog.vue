@@ -1,7 +1,17 @@
 <template>
   <v-dialog max-width="500px">
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn v-bind="{ ...activatorProps, ...anchorProps }">{{ anchorTitle }}</v-btn>
+      <v-btn
+        v-bind="{ ...activatorProps, ...anchorProps }"
+        v-if="anchorTitle"
+      >
+        {{ anchorTitle }}
+      </v-btn>
+
+      <v-btn
+        v-bind="{ ...activatorProps, ...anchorProps }"
+        v-else
+      ></v-btn>
     </template>
 
     <template v-slot:default="{ isActive }">
@@ -35,7 +45,7 @@ type ConfirmDialogProps = {
   title: string;
   text: string;
   onConfirm: () => void;
-  anchorTitle: string;
+  anchorTitle?: string;
   anchorProps?: VBtn["$props"];
 };
 

@@ -9,7 +9,7 @@ import type {
 } from "~/types";
 
 export const useAuth = () => {
-  const { client, setAuthToken, isAuthToken } = useAxiosClient();
+  const { client, setAuthToken, removeAuthToken, isAuthToken } = useAxiosClient();
   const queryClient = useQueryClient();
   const { snackbar } = useSnackbar();
 
@@ -39,6 +39,15 @@ export const useAuth = () => {
     },
   });
 
+  const logout = () => {
+    removeAuthToken();
+    queryClient.resetQueries({ queryKey: [API_KEY.USER] });
+    queryClient.resetQueries({ queryKey: [API_KEY.WORKSPACES] });
+    queryClient.resetQueries({ queryKey: [API_KEY.PROJECTS] });
+
+    navigateTo("/login");
+  };
+
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: [API_KEY.USER],
     queryFn: async (): Promise<User> => (await client.get("/auth/me/")).data,
@@ -50,6 +59,7 @@ export const useAuth = () => {
   return {
     login,
     createAccount,
+    logout,
     isLogging,
     isCreatingAccount,
     user,

@@ -5,6 +5,7 @@ type AxiosClientContext = {
   client: AxiosInstance;
   isAuthToken: boolean;
   setAuthToken: (token: string) => void;
+  removeAuthToken: () => void;
 };
 
 export const useInitializeAxiosClient = () => {
@@ -32,6 +33,12 @@ export const useInitializeAxiosClient = () => {
     isClientTokenSet.value = true;
   };
 
+  const removeAuthToken = () => {
+    cookie.value = null;
+    delete client.defaults.headers.common["Authorization"];
+    isClientTokenSet.value = false;
+  };
+
   onMounted(() => {
     if (cookie.value) {
       client.defaults.headers.common["Authorization"] = `bearer ${cookie.value}`;
@@ -44,6 +51,7 @@ export const useInitializeAxiosClient = () => {
   return {
     client,
     setAuthToken,
+    removeAuthToken,
     isAuthToken,
   };
 };
