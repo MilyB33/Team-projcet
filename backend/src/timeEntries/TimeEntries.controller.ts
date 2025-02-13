@@ -22,6 +22,7 @@ import { User as PrismaUser } from '@prisma/client';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { TimeEntryEntity } from './entities/time-entry.entity';
 import { UpdateTimeEntryDto } from './dto/update-time-entry.dto';
+import { EndTimeEntryDto } from './dto/end-time-entry.dto';
 
 @ApiBearerAuth()
 @Controller('time_entries')
@@ -46,6 +47,17 @@ export class TimeEntriesController {
     return new TimeEntryEntity(timeEntry);
   }
 
+  @Post(':id/end')
+  @ApiOkResponse({ type: TimeEntryEntity })
+  async end(
+    @Body() data: EndTimeEntryDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const timeEntry = await this.timeEntriesService.update(data, id);
+
+    return new TimeEntryEntity(timeEntry);
+  }
+
   @Patch(':id')
   @ApiOkResponse({ type: TimeEntryEntity })
   async update(
@@ -57,7 +69,7 @@ export class TimeEntriesController {
     return new TimeEntryEntity(timeEntry);
   }
 
-  @Delete('id')
+  @Delete(':id')
   @ApiOkResponse()
   async delete(@Param('id', ParseIntPipe) id: number) {
     await this.timeEntriesService.delete(id);

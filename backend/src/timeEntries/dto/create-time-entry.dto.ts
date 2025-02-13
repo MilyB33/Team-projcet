@@ -1,3 +1,4 @@
+import { Optional } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
@@ -18,7 +19,7 @@ export class CreateTimeEntryDto {
   startTime: Date;
 
   @IsDate()
-  @IsNotEmpty()
   @ApiProperty()
-  endTime: Date;
+  @Optional()
+  endTime: Date | null;
 }

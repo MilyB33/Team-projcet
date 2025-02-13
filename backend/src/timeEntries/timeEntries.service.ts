@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { UpdateTimeEntryDto } from './dto/update-time-entry.dto';
@@ -14,6 +14,17 @@ export class TimeEntriesService {
   }
 
   async update(updateTimeEntryDto: UpdateTimeEntryDto, id: number) {
+    if (updateTimeEntryDto.endTime && updateTimeEntryDto.startTime) {
+      if (
+        new Date(updateTimeEntryDto.endTime) <=
+        new Date(updateTimeEntryDto.startTime)
+      ) {
+        throw new BadRequestException(
+          'End time must be later than start time.',
+        );
+      }
+    }
+
     return this.prisma.timeEntry.update({
       where: { id },
       data: updateTimeEntryDto,

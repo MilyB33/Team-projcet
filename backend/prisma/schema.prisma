@@ -31,7 +31,6 @@ model User {
   company    String?
   type       AccountType @relation(fields: [typeId], references: [id])
   typeId     Int
-
   workspaces   Workspace[]
   own_projects Project[]
   projects     ProjectUser[]
@@ -97,7 +96,7 @@ model TimeEntry {
   projectId   Int
   description String
   startTime   DateTime
-  endTime     DateTime
+  endTime     DateTime?
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)

@@ -24,8 +24,8 @@ export class TimeEntryEntity implements TimeEntry {
   @ApiProperty()
   startTime: Date;
 
-  @ApiProperty()
-  endTime: Date;
+  @ApiProperty({ required: false, nullable: true })
+  endTime: Date | null;
 
   @ApiProperty()
   createdAt: Date;
