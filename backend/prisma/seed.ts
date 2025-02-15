@@ -1,4 +1,4 @@
-import { PrismaClient, ProjectUser } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -97,38 +97,49 @@ const createProjects = async () => {
 };
 
 const addStandardMembers = async () => {
-  const membersData = [...data.members];
+  const membersData = [...data.members]; // Predefined members
 
+  // Generate additional random members
   for (let i = 0; i < NUM_USERS * 2; i++) {
-    let projectId: number, userId: number, exists: ProjectUser;
+    const projectId = faker.number.int({ min: 1, max: NUM_PROJECTS });
+    const userId = faker.number.int({ min: 1, max: NUM_USERS });
 
-    do {
-      projectId = faker.number.int({ min: 1, max: NUM_PROJECTS });
-      userId = faker.number.int({ min: 1, max: NUM_USERS });
-
-      exists = await prisma.projectUser.findUnique({
-        where: { projectId_userId: { projectId, userId } },
-      });
-    } while (exists);
-
-    membersData.push({ projectId, userId });
+    membersData.push({ projectId, userId }); // Add to list
   }
 
+  // Insert all members, ensuring no duplicates
   for (const member of membersData) {
-    await prisma.projectUser.create({ data: member });
+    await prisma.projectUser.upsert({
+      where: {
+        projectId_userId: {
+          projectId: member.projectId,
+          userId: member.userId,
+        },
+      },
+      update: {}, // Do nothing if already exists
+      create: { projectId: member.projectId, userId: member.userId },
+    });
   }
 
-  console.log(`✅ Added ${membersData.length} project members`);
+  console.log(`✅ Successfully added ${membersData.length} project members.`);
 };
 
 const createTimeEntries = async () => {
   const entriesData = [...data.timeEntries];
 
-  // Generate additional time entries with Faker
   for (let i = 0; i < NUM_TIME_ENTRIES; i++) {
     const startTime = faker.date.recent({ days: 30 });
+
+    // Ensure endTime is within the same day
     const endTime = faker.datatype.boolean()
-      ? faker.date.soon({ days: 1, refDate: startTime })
+      ? new Date(
+          startTime.getFullYear(),
+          startTime.getMonth(),
+          startTime.getDate(),
+          faker.number.int({ min: startTime.getHours(), max: 23 }),
+          faker.number.int({ min: startTime.getMinutes(), max: 59 }),
+          faker.number.int({ min: startTime.getSeconds(), max: 59 }),
+        )
       : null;
 
     entriesData.push({

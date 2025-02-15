@@ -163,7 +163,7 @@ export class ProjectsController {
   }
 
   @Get(':id/members')
-  @ApiOkResponse({ type: ProjectUserEntity })
+  @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
   async findProjectMembers(@Param('id', ParseIntPipe) id: number) {
     const members = await this.projectsService.findProjectMembers(id);
 
@@ -176,5 +176,13 @@ export class ProjectsController {
     const projects = await this.projectsService.findUserProjects(user);
 
     return projects.map((project) => new ProjectEntity(project));
+  }
+
+  @Get('members')
+  @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
+  async findAllProjectCreatorMembers(@User() user: PrismaUser) {
+    const members = await this.projectsService.findAllCreatorMembers(user);
+
+    return members.map((member) => new ProjectUserEntity(member));
   }
 }
