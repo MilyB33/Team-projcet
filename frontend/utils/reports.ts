@@ -78,6 +78,8 @@ export const prepareWorkspacesReportsTableData = (reportData?: WorkspacesReport)
   if (!reportData) {
     return {
       workspaces: [],
+      projects: [],
+      members: [],
     };
   }
 

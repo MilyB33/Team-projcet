@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TimeEntry } from '@prisma/client';
 import { Exclude } from 'class-transformer';
-import { ProjectEntity } from 'src/projects/entities/project.entity';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { ProjectUserEntity } from 'src/projects/entities/project-user.entity';
 
 export class TimeEntryEntity implements TimeEntry {
   constructor(partial: Partial<TimeEntryEntity>) {
@@ -13,10 +12,7 @@ export class TimeEntryEntity implements TimeEntry {
   id: number;
 
   @ApiProperty()
-  userId: number;
-
-  @ApiProperty()
-  projectId: number;
+  projectUserId: number;
 
   @ApiProperty()
   description: string;
@@ -32,9 +28,5 @@ export class TimeEntryEntity implements TimeEntry {
 
   @ApiProperty()
   @Exclude()
-  user: UserEntity;
-
-  @ApiProperty()
-  @Exclude()
-  project: ProjectEntity;
+  projectUser: ProjectUserEntity;
 }

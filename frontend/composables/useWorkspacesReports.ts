@@ -38,7 +38,7 @@ export const useWorkspacesReports = () => {
     return !!filters.value.workspaceId?.length;
   });
 
-  const filtersKey = computed(() => [API_KEY.PROJECTS_REPORT, filters.value]);
+  const filtersKey = computed(() => [API_KEY.WORKSPACES_REPORT, filters.value]);
 
   const { data: workspacesReports, isFetching: fetchingWorkspacesReports } = useQuery({
     queryKey: filtersKey,

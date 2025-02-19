@@ -5,7 +5,6 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { WorkspaceEntity } from 'src/workspaces/entities/workspace.entity';
 import { ProjectUserEntity } from './project-user.entity';
 import { GroupEntity } from 'src/groups/entities/group.entity';
-import { TimeEntryEntity } from 'src/timeEntries/entities/time-entry.entity';
 
 export class ProjectEntity implements Project {
   constructor(partial: Partial<ProjectEntity>) {
@@ -48,8 +47,4 @@ export class ProjectEntity implements Project {
   @ApiProperty()
   @Exclude()
   groups: GroupEntity[];
-
-  @ApiProperty()
-  @Exclude()
-  time_entries: TimeEntryEntity[];
 }

@@ -53,7 +53,7 @@ watchEffect(() => {
 });
 
 const onClearFilters = () => {
-  form.resetForm();
+  form.setValues({ workspaceId: props.initialValues?.workspaceId, datesRange: [] });
   props.onSubmit(form.values);
 };
 

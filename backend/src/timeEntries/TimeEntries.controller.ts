@@ -41,8 +41,8 @@ export class TimeEntriesController {
 
   @Post()
   @ApiCreatedResponse({ type: TimeEntryEntity })
-  async create(@Body() data: CreateTimeEntryDto, @User() user: PrismaUser) {
-    const timeEntry = await this.timeEntriesService.create(data, user.id);
+  async create(@Body() data: CreateTimeEntryDto) {
+    const timeEntry = await this.timeEntriesService.create(data);
 
     return new TimeEntryEntity(timeEntry);
   }

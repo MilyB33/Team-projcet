@@ -120,14 +120,14 @@ export type TimeEntry = {
 type WorkspacesReportWorkspace = {
   id: number;
   name: string;
-  projects: { time_entries: TimeEntry[] }[];
+  projects: WorkspacesReportProject[];
   totalTime: string;
 };
 
 type WorkspacesReportProject = {
   id: number;
-  admin: User;
-  time_entries: TimeEntry[];
+  admin: Pick<User, "id" | "email">;
+  members: WorkspacesReportMember[];
   name: string;
   workspace: Pick<Workspace, "id" | "name">;
   totalTime: string;
@@ -136,7 +136,7 @@ type WorkspacesReportProject = {
 type WorkspacesReportMember = {
   id: number;
   project: Pick<WorkspacesReportProject, "id" | "name">;
-  user: User;
+  user: Pick<User, "id" | "first_name" | "last_name" | "email">;
   totalTime: string;
 };
 

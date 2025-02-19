@@ -1,35 +1,20 @@
 <template>
   <div class="d-flex flex-column ga-5">
-    <div class="d-flex flex-column ga-2">
-      <h3>Workspaces</h3>
-      <v-data-table
-        hide-default-footer
-        :headers="workspacesReportsTableHeaders"
-        :items="reportData.workspaces"
-        height="250"
-        sticky
-      ></v-data-table>
-    </div>
-    <div class="d-flex flex-column ga-2">
-      <h3>Projects</h3>
-      <v-data-table
-        hide-default-footer
-        :headers="workspacesReportsProjectsTableHeaders"
-        :items="reportData.projects"
-        height="250"
-        sticky
-      ></v-data-table>
-    </div>
-    <div class="d-flex flex-column ga-2">
-      <h3>Members</h3>
-      <v-data-table
-        hide-default-footer
-        :headers="workspacesReportsMembersTableHeaders"
-        :items="reportData.members"
-        height="250"
-        sticky
-      ></v-data-table>
-    </div>
+    <ReportDataTable
+      title="Workspaces"
+      :headers="workspacesReportsTableHeaders"
+      :items="reportData.workspaces"
+    />
+    <ReportDataTable
+      title="Projects"
+      :headers="workspacesReportsProjectsTableHeaders"
+      :items="reportData.projects"
+    />
+    <ReportDataTable
+      title="Members"
+      :headers="workspacesReportsMembersTableHeaders"
+      :items="reportData.members"
+    />
   </div>
 </template>
 

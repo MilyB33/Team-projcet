@@ -22,4 +22,9 @@ export class CreateTimeEntryDto {
   @ApiProperty()
   @Optional()
   endTime: Date | null;
+
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty()
+  projectUserId: number;
 }

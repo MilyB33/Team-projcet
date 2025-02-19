@@ -7,9 +7,9 @@ import { UpdateTimeEntryDto } from './dto/update-time-entry.dto';
 export class TimeEntriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createTimeEntryDto: CreateTimeEntryDto, userId: number) {
+  async create(createTimeEntryDto: CreateTimeEntryDto) {
     return this.prisma.timeEntry.create({
-      data: { ...createTimeEntryDto, userId },
+      data: { ...createTimeEntryDto },
     });
   }
 
@@ -36,10 +36,14 @@ export class TimeEntriesService {
   }
 
   async findProjectEntries(projectId: number) {
-    return this.prisma.timeEntry.findMany({ where: { projectId } });
+    return this.prisma.timeEntry.findMany({
+      where: { projectUser: { projectId } },
+    });
   }
 
   async findUserEntries(userId: number) {
-    return this.prisma.timeEntry.findMany({ where: { userId } });
+    return this.prisma.timeEntry.findMany({
+      where: { projectUser: { userId } },
+    });
   }
 }

@@ -103,17 +103,15 @@ const createProjects = async () => {
 };
 
 const addStandardMembers = async () => {
-  const membersData = [...data.members]; // Predefined members
+  const membersData = [...data.members];
 
-  // Generate additional random members
   for (let i = 0; i < NUM_USERS * 2; i++) {
     const projectId = faker.number.int({ min: 1, max: NUM_PROJECTS });
     const userId = faker.number.int({ min: 1, max: NUM_USERS });
 
-    membersData.push({ projectId, userId }); // Add to list
+    membersData.push({ projectId, userId });
   }
 
-  // Insert all members, ensuring no duplicates
   for (const member of membersData) {
     await prisma.projectUser.upsert({
       where: {
@@ -122,7 +120,7 @@ const addStandardMembers = async () => {
           userId: member.userId,
         },
       },
-      update: {}, // Do nothing if already exists
+      update: {},
       create: { projectId: member.projectId, userId: member.userId },
     });
   }
@@ -131,12 +129,11 @@ const addStandardMembers = async () => {
 };
 
 const createTimeEntries = async () => {
-  const entriesData = [...data.timeEntries];
+  const entriesData = [];
 
   for (let i = 0; i < NUM_TIME_ENTRIES; i++) {
     const startTime = faker.date.recent({ days: 30 });
 
-    // Ensure endTime is within the same day
     const endTime = faker.datatype.boolean()
       ? new Date(
           startTime.getFullYear(),
@@ -148,9 +145,16 @@ const createTimeEntries = async () => {
         )
       : null;
 
+    // Fetch a random projectUser
+    const projectUser = await prisma.projectUser.findFirst({
+      orderBy: { id: 'asc' },
+      skip: faker.number.int({ min: 0, max: NUM_USERS * 2 - 1 }),
+    });
+
+    if (!projectUser) continue; // Skip if no projectUser found
+
     entriesData.push({
-      userId: faker.number.int({ min: 1, max: NUM_USERS }),
-      projectId: faker.number.int({ min: 1, max: NUM_PROJECTS }),
+      projectUserId: projectUser.id, // Use projectUserId instead of userId & projectId
       description: faker.hacker.phrase(),
       startTime,
       endTime,
@@ -173,7 +177,6 @@ async function main() {
   await createTimeEntries();
 }
 
-// Execute the main function
 main()
   .catch((e) => {
     console.error(e);
