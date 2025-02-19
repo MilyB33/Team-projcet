@@ -106,3 +106,42 @@ export type CreateProjectRequest = {
 export type UpdateProjectRequest = Partial<Omit<CreateProjectRequest, "workspaceId">> & {
   id: number;
 };
+
+export type TimeEntry = {
+  id: number;
+  projectId: number;
+  createdAt: Date;
+  description: string;
+  endTime: Date;
+  startTime: Date;
+  userId: number;
+};
+
+type WorkspacesReportWorkspace = {
+  id: number;
+  name: string;
+  projects: { time_entries: TimeEntry[] }[];
+  totalTime: string;
+};
+
+type WorkspacesReportProject = {
+  id: number;
+  admin: User;
+  time_entries: TimeEntry[];
+  name: string;
+  workspace: Pick<Workspace, "id" | "name">;
+  totalTime: string;
+};
+
+type WorkspacesReportMember = {
+  id: number;
+  project: Pick<WorkspacesReportProject, "id" | "name">;
+  user: User;
+  totalTime: string;
+};
+
+export type WorkspacesReport = {
+  workspaces: WorkspacesReportWorkspace[];
+  projects: WorkspacesReportProject[];
+  members: WorkspacesReportMember[];
+};

@@ -72,11 +72,17 @@ const createProjects = async () => {
   const projectsData = [...data.projects];
 
   for (let i = 0; i < NUM_PROJECTS; i++) {
+    const workspaceId = faker.number.int({ min: 1, max: NUM_WORKSPACES });
+    const createdBy = await prisma.workspace.findUnique({
+      where: { id: workspaceId },
+      select: { created_by: true },
+    });
+
     projectsData.push({
       name: faker.commerce.productName(),
       description: faker.lorem.sentence(),
-      workspaceId: faker.number.int({ min: 1, max: NUM_WORKSPACES }),
-      createdBy: faker.number.int({ min: 1, max: NUM_USERS }),
+      workspaceId: workspaceId,
+      createdBy: createdBy.created_by, // Set createdBy to the user who created the workspace
       accessCode: faker.string.alphanumeric(6),
       groups: [],
     });

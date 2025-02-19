@@ -19,11 +19,11 @@ export class SummaryFiltersDto {
   @IsDate()
   @ApiProperty({ nullable: true, required: false })
   @IsOptional()
-  startTime: Date;
+  startDate: Date;
 
   @Type(() => Date)
   @IsDate()
   @ApiProperty({ nullable: true, required: false })
   @IsOptional()
-  endTime: Date;
+  endDate: Date;
 }

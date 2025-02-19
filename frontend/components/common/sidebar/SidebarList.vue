@@ -35,7 +35,7 @@
 
     <NavigationLink
       icon="mdi-chart-bar"
-      to="/reports"
+      to="/reports/projects"
     >
       Reports
     </NavigationLink>
