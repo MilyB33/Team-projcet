@@ -1,21 +1,25 @@
 <template>
-  <ReportsFilters :onSubmit="setFilters">
-    <v-select
-      label="Project"
+  <ReportsFilters
+    :onSubmit="setFilters"
+    :initial-values="{ projectId: initialProjects }"
+  >
+    <IDFilterField
+      v-if="projectsItems?.length"
       :items="projectsItems"
-      density="compact"
-      :disabled="loadingProjects"
-      variant="outlined"
-      v-model="project"
-      :error-messages="projectError"
-      hide-details
-      max-width="300"
+      :loading="loading"
+      fieldId="projectId"
     />
   </ReportsFilters>
 </template>
 
 <script lang="ts" setup>
-const { projectsItems, loadingProjects, setFilters } = useProjectReports();
+type ProjectsReportsFiltersProps = {
+  projectsItems: { title: string; value: number }[];
+  loading: boolean;
+  setFilters: (newFilters: ProjectFilters) => void;
+};
 
-const { value: project, errorMessage: projectError } = useField<number>("projectId");
+const props = defineProps<ProjectsReportsFiltersProps>();
+
+const initialProjects = computed(() => props.projectsItems?.map((item) => item.value) || []);
 </script>

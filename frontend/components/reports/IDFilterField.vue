@@ -13,6 +13,17 @@
     max-width="300"
     multiple
   >
+    <template v-slot:selection="{ item, index }">
+      <span v-if="index < 1">{{ item.title }}</span>
+
+      <span
+        v-if="index === 1"
+        class="text-grey text-caption align-self-center"
+      >
+        (+{{ value.length - 2 }} others)
+      </span>
+    </template>
+
     <template v-slot:item="{ props, item }">
       <v-list-item
         v-bind="props"

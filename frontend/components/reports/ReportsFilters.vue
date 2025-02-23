@@ -47,7 +47,11 @@ const form = useForm({
 });
 
 watchEffect(() => {
-  if (props.initialValues?.workspaceId?.length) {
+  if (
+    props.initialValues?.workspaceId?.length ||
+    props.initialValues?.projectId?.length ||
+    props.initialValues?.memberId?.length
+  ) {
     form.setValues(props.initialValues);
   }
 });

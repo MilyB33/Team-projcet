@@ -10,7 +10,6 @@ import { AddGroupsDto } from './dto/add-groups.dto';
 import { UpdateGroupDto } from '../groups/dto/update-group.dto';
 import * as crypto from 'crypto';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService {
@@ -264,12 +263,36 @@ export class ProjectsService {
     });
   }
 
-  async findAllCreatorMembers(user: User) {
-    return this.prisma.projectUser.findMany({
-      where: {
-        project: { createdBy: user.id },
+  async findUniqueProjectMembers(userId: number) {
+    const projects = await this.prisma.project.findMany({
+      where: { createdBy: userId }, // Projects created by the user
+      select: {
+        id: true,
+        name: true,
+        members: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    const uniqueMembers = Array.from(
+      new Map(
+        projects
+          .flatMap((project) => project.members)
+          .map((m) => [m.user.id, m.user]),
+      ).values(),
+    );
+
+    return uniqueMembers;
   }
 
   private async generateAccessCode() {

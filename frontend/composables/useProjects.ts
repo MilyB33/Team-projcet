@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { API_KEY } from "~/constant";
-import type { Project, ProjectUser } from "~/types";
+import type { Project, ProjectUser, User } from "~/types";
 
 export const useProjects = () => {
   const { client } = useAxiosClient();
@@ -10,6 +10,11 @@ export const useProjects = () => {
   const { data: projects, isLoading: loadingProjects } = useQuery({
     queryKey: [API_KEY.PROJECTS],
     queryFn: async (): Promise<Project[]> => (await client.get("/projects/")).data,
+  });
+
+  const { data: members, isLoading: loadingMembers } = useQuery({
+    queryKey: [API_KEY.PROJECTS_MEMBERS],
+    queryFn: async (): Promise<User[]> => (await client.get("/projects/members/all/")).data,
   });
 
   const { mutateAsync: joinProject, isPending: isJoiningProject } = useMutation({
@@ -36,5 +41,14 @@ export const useProjects = () => {
     },
   });
 
-  return { projects, loadingProjects, isJoiningProject, leavingProject, joinProject, leaveProject };
+  return {
+    projects,
+    members,
+    loadingProjects,
+    loadingMembers,
+    isJoiningProject,
+    leavingProject,
+    joinProject,
+    leaveProject,
+  };
 };

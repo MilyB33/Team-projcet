@@ -178,10 +178,12 @@ export class ProjectsController {
     return projects.map((project) => new ProjectEntity(project));
   }
 
-  @Get('members')
+  @Get('members/all')
   @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
   async findAllProjectCreatorMembers(@User() user: PrismaUser) {
-    const members = await this.projectsService.findAllCreatorMembers(user);
+    const members = await this.projectsService.findUniqueProjectMembers(
+      user.id,
+    );
 
     return members.map((member) => new ProjectUserEntity(member));
   }

@@ -1,10 +1,10 @@
 import * as moment from 'moment';
 import { Injectable } from '@nestjs/common';
-import { SummaryFiltersDto } from './dto/summary-filters.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UsersSummaryFiltersDto } from './dto/users-summary-filters';
+import { MembersFiltersDto } from './dto/members-filters';
 import { WorkspacesFiltersDto } from './dto/workspaces-filters';
 import { TimeEntryEntity } from 'src/timeEntries/entities/time-entry.entity';
+import { ProjectsFiltersDto } from './dto/projects-filters';
 
 @Injectable()
 export class ReportsService {
@@ -22,12 +22,31 @@ export class ReportsService {
     };
   }
 
-  async projectsSummary(filters: SummaryFiltersDto) {
-    return {};
+  async projectsSummary(filters: ProjectsFiltersDto, userId: number) {
+    const projects = await this.getProjects(filters, userId);
+    const members = projects.map((project) => project.members).flat(1);
+
+    return { projects, members };
   }
 
-  async usersSummary(filters: UsersSummaryFiltersDto) {
-    return {};
+  async membersSummary(filters: MembersFiltersDto, userId: number) {
+    const members = await this.getMembers(filters, userId);
+    const timeEntries = members.map((member) => member.timeEntries).flat(1);
+
+    const mappedTimeEntries = timeEntries.map((timeEntry) => {
+      // @ts-expect-error this entry has more properties
+      const totalTime = this.calculateTotalTime([timeEntry]);
+
+      return {
+        ...timeEntry,
+        totalTime,
+      };
+    });
+
+    return {
+      members,
+      timeEntries: mappedTimeEntries,
+    };
   }
 
   async getWorkspaces(filters: WorkspacesFiltersDto, userId: number) {
@@ -129,6 +148,145 @@ export class ReportsService {
     });
 
     return mappedWorkspaces;
+  }
+
+  async getProjects(filters: ProjectsFiltersDto, userId: number) {
+    const hasDateFilters = filters.startDate && filters.endDate;
+    const timeEntryFilter = hasDateFilters
+      ? this.createTimeEntryFilter(filters)
+      : undefined;
+
+    const projects = await this.prisma.project.findMany({
+      where: {
+        createdBy: userId,
+        id: { in: filters.projectId },
+      },
+      select: {
+        id: true,
+        name: true,
+        admin: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        workspace: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        members: {
+          select: {
+            project: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            id: true,
+            user: {
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+              },
+            },
+            time_entries: {
+              where: {
+                ...(hasDateFilters ? timeEntryFilter : undefined),
+                endTime: { not: null },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const mappedProjects = projects.map((project) => {
+      const mappedMembers = project.members.map((member) => {
+        const totalTime = this.calculateTotalTime(member.time_entries);
+
+        return {
+          id: member.id,
+          user: member.user,
+          project: member.project,
+          totalTime,
+        };
+      });
+
+      const projectTotalTimeMs = mappedMembers.reduce((acc, member) => {
+        return acc + this.parseTotalTime(member.totalTime);
+      }, 0);
+
+      return {
+        ...project,
+        members: mappedMembers,
+        totalTime: this.formatMillisecondsToTime(projectTotalTimeMs),
+      };
+    });
+
+    return mappedProjects;
+  }
+
+  async getMembers(filters: MembersFiltersDto, userId: number) {
+    const hasDateFilters = filters.startDate && filters.endDate;
+    const timeEntryFilter = hasDateFilters
+      ? this.createTimeEntryFilter(filters)
+      : undefined;
+
+    const members = await this.prisma.projectUser.findMany({
+      where: {
+        id: { in: filters.memberId },
+        project: { createdBy: userId },
+      },
+      select: {
+        project: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        id: true,
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+          },
+        },
+        time_entries: {
+          include: {
+            projectUser: {
+              include: {
+                project: true,
+                user: true,
+              },
+            },
+          },
+          where: {
+            ...(hasDateFilters ? timeEntryFilter : undefined),
+            endTime: { not: null },
+          },
+        },
+      },
+    });
+
+    const mappedMembers = members.map((member) => {
+      const totalTime = this.calculateTotalTime(member.time_entries as any);
+
+      return {
+        id: member.id,
+        user: member.user,
+        project: member.project,
+        timeEntries: member.time_entries,
+        totalTime,
+      };
+    });
+
+    return mappedMembers;
   }
 
   private createTimeEntryFilter(filters: { startDate: Date; endDate: Date }) {

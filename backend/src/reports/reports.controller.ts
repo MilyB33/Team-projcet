@@ -1,19 +1,12 @@
-import {
-  Controller,
-  Get,
-  Query,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ReportsService } from './reports.service';
-import { SummaryFiltersDto } from './dto/summary-filters.dto';
-import { UsersSummaryFiltersDto } from './dto/users-summary-filters';
+import { MembersFiltersDto } from './dto/members-filters';
 import { WorkspacesFiltersDto } from './dto/workspaces-filters';
 import { User } from 'src/common/decorators/user.decorator';
 import { User as PrismaUser } from '@prisma/client';
+import { ProjectsFiltersDto } from './dto/projects-filters';
 
 @ApiBearerAuth()
 @Controller('reports')
@@ -36,17 +29,21 @@ export class ReportsController {
   }
 
   @Get('projects')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async projectsSummary(@Query() params: SummaryFiltersDto) {
-    const summary = await this.reportsService.projectsSummary(params);
+  async projectsSummary(
+    @Query() params: ProjectsFiltersDto,
+    @User() user: PrismaUser,
+  ) {
+    const summary = await this.reportsService.projectsSummary(params, user.id);
 
     return summary;
   }
 
-  @Get('users')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async usersSummary(@Query() params: UsersSummaryFiltersDto) {
-    const summary = await this.reportsService.usersSummary(params);
+  @Get('members')
+  async membersSummary(
+    @Query() params: MembersFiltersDto,
+    @User() user: PrismaUser,
+  ) {
+    const summary = await this.reportsService.membersSummary(params, user.id);
 
     return summary;
   }
