@@ -33,9 +33,14 @@
       v-if="project && !loadingProject"
       :project="project"
     />
+
+    <EmployerProjectActiveMembers
+      v-if="activeMembers?.length && !loadingActiveMembers"
+      :activeMembers="activeMembers"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-const { project, loadingProject } = useProject();
+const { project, loadingProject, activeMembers, loadingActiveMembers } = useProject();
 </script>

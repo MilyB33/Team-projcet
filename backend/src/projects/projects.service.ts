@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersService } from 'src/users/users.service';
@@ -263,9 +264,47 @@ export class ProjectsService {
     });
   }
 
+  async findActiveMembers(projectId: number) {
+    const members = await this.prisma.projectUser.findMany({
+      where: {
+        projectId,
+        time_entries: { some: { endTime: null } },
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+          },
+        },
+        time_entries: {
+          where: {
+            endTime: null,
+          },
+          take: 1,
+        },
+      },
+    });
+
+    const mappedMembers = members.map((member) => {
+      const totalTime = this.calculateTotalTime(
+        member.time_entries[0].startTime,
+      );
+
+      return {
+        ...member,
+        totalTime,
+      };
+    });
+
+    return mappedMembers;
+  }
+
   async findUniqueProjectMembers(userId: number) {
     const projects = await this.prisma.project.findMany({
-      where: { createdBy: userId }, // Projects created by the user
+      where: { createdBy: userId },
       select: {
         id: true,
         name: true,
@@ -310,5 +349,20 @@ export class ProjectsService {
     }
 
     return accessCode;
+  }
+
+  // TODO: move to util or common service
+  private calculateTotalTime(startTime: Date) {
+    const currentTime = moment(); // Get the current time
+    const start = moment(startTime); // Convert startTime to moment object
+    const totalTime = currentTime.diff(start, 'milliseconds'); // Calculate difference in milliseconds
+
+    const duration = moment.duration(totalTime);
+    const hours = Math.floor(duration.asHours()); // Total hours
+    const minutes = duration.minutes(); // Remaining minutes
+
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+    return formattedTime;
   }
 }

@@ -14,6 +14,7 @@
     <NavigationLink
       icon="mdi-clock-fast"
       to="/tracker"
+      v-if="!isEmployer"
     >
       Time tracker
     </NavigationLink>
@@ -38,13 +39,6 @@
       to="/reports/projects"
     >
       Reports
-    </NavigationLink>
-
-    <NavigationLink
-      icon="mdi-account-group-outline"
-      to="/team"
-    >
-      Team
     </NavigationLink>
   </v-list>
 </template>

@@ -80,6 +80,8 @@ export type ProjectUser = {
   project: Project;
   user: Pick<User, "id" | "first_name" | "last_name" | "email">;
   groups: ProjectGroup[];
+  totalTime?: string;
+  time_entries: TimeEntry[];
 };
 
 export type Project = {

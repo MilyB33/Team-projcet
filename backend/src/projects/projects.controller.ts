@@ -187,4 +187,12 @@ export class ProjectsController {
 
     return members.map((member) => new ProjectUserEntity(member));
   }
+
+  @Get(':id/members/active')
+  @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
+  async findAllActiveMembers(@Param('id', ParseIntPipe) id: number) {
+    const members = await this.projectsService.findActiveMembers(id);
+
+    return members.map((member) => new ProjectUserEntity(member));
+  }
 }

@@ -1,5 +1,5 @@
 import moment from "moment";
-import type { CreateProjectRequest, Project, User, Workspace } from "~/types";
+import type { CreateProjectRequest, Project, ProjectUser, User, Workspace } from "~/types";
 
 export const prepareWorkspacesItems = (workspaces: Workspace[]) => {
   return workspaces.map((workspace) => ({
@@ -163,4 +163,43 @@ export const prepareEmployeeProjectsTableData = (projects: Project[], user: User
       joinedAt: moment(joinedAt).format("MMMM Do YYYY"),
     };
   });
+};
+
+export const employerActiveMembersTableHeaders = [
+  {
+    title: "Lp.",
+    sortable: false,
+    key: "lp",
+  },
+  {
+    title: "Name",
+    sortable: false,
+    key: "name",
+  },
+  {
+    title: "email",
+    sortable: false,
+    key: "email",
+  },
+  {
+    title: "Start time",
+    sortable: false,
+    key: "startTime",
+  },
+  {
+    title: "Hours",
+    sortable: false,
+    key: "hours",
+  },
+];
+
+export const prepareEmployerActiveMembersTableData = (members: ProjectUser[]) => {
+  console.log(members);
+  return members.map((member, index) => ({
+    lp: index + 1,
+    name: `${member.user.first_name} ${member.user.last_name}`,
+    email: member.user.email,
+    startTime: member.time_entries[0].startTime,
+    hours: member.totalTime,
+  }));
 };

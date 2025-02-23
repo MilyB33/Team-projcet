@@ -42,7 +42,7 @@ export const useMembersReport = () => {
     return !!filters.value.memberId?.length;
   });
 
-  const filtersKey = computed(() => [API_KEY.WORKSPACES_REPORT, filters.value]);
+  const filtersKey = computed(() => [API_KEY.MEMBERS_REPORT, filters.value]);
 
   const { data: membersReport, isFetching: fetchingMembersReport } = useQuery({
     queryKey: filtersKey,

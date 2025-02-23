@@ -238,7 +238,7 @@ export class ReportsService {
 
     const members = await this.prisma.projectUser.findMany({
       where: {
-        id: { in: filters.memberId },
+        userId: { in: filters.memberId },
         project: { createdBy: userId },
       },
       select: {
@@ -246,6 +246,7 @@ export class ReportsService {
           select: {
             id: true,
             name: true,
+            createdBy: true,
           },
         },
         id: true,
@@ -294,7 +295,7 @@ export class ReportsService {
       AND: [
         {
           endTime: {
-            not: null, // Exclude entries without an end date
+            not: null,
           },
         },
         {

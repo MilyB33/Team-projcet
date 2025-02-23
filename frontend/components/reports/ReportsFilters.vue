@@ -76,6 +76,7 @@ const onSubmit = form.handleSubmit((values) => {
   props.onSubmit({
     projectId: values.projectId,
     workspaceId: values.workspaceId,
+    memberId: values.memberId,
     endDate,
     startDate,
   });

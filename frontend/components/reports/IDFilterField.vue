@@ -17,10 +17,10 @@
       <span v-if="index < 1">{{ item.title }}</span>
 
       <span
-        v-if="index === 1"
+        v-if="index === 1 && items.length !== 1"
         class="text-grey text-caption align-self-center"
       >
-        (+{{ value.length - 2 }} others)
+        (+{{ value.length - 1 }} others)
       </span>
     </template>
 
