@@ -1,13 +1,10 @@
 <template>
   <v-card class="mb-2">
-    <v-tabs
-      v-model="tab"
-      bg-color="blue"
-    >
+    <v-tabs bg-color="blue">
       <NuxtLink
         class="text-white"
-        to="/reports/summary"
-        active-class="border-b-lg"
+        to="/reports"
+        exact-active-class="border-b-lg"
         style="border-color: white !important"
       >
         <v-tab value="one"> Summary </v-tab>
@@ -17,6 +14,7 @@
         to="/reports/workspaces"
         active-class="border-b-lg"
         style="border-color: white !important"
+        v-if="isEmployer"
       >
         <v-tab value="one"> Workspaces </v-tab>
       </NuxtLink>
@@ -33,6 +31,7 @@
         to="/reports/users"
         active-class="border-b-lg"
         style="border-color: white !important"
+        v-if="isEmployer"
       >
         <v-tab value="two">Users</v-tab>
       </NuxtLink>
@@ -40,4 +39,6 @@
   </v-card>
 </template>
 
-<script></script>
+<script lang="ts" setup>
+const { isEmployer } = useUser();
+</script>

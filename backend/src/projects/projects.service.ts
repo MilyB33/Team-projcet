@@ -134,7 +134,7 @@ export class ProjectsService {
       where: { members: { some: { userId: id } } },
       include: this.PROJECT_INCLUDE,
     });
-    console.log(projects);
+
     return projects;
   }
 

@@ -1,4 +1,5 @@
 import type {
+  EmployeeProjectsReport,
   MembersReport,
   ProjectsReport,
   TimeEntry,
@@ -73,6 +74,39 @@ export const workspacesReportsMembersTableHeaders = [
     title: "Project",
     sortable: false,
     key: "project",
+  },
+  {
+    title: "Hours",
+    sortable: true,
+    key: "hours",
+  },
+];
+
+export const employeeReportsTimeEntriesTableHeaders = [
+  {
+    title: "Lp.",
+    sortable: true,
+    key: "lp",
+  },
+  {
+    title: "Project",
+    sortable: false,
+    key: "project",
+  },
+  {
+    title: "Description",
+    sortable: false,
+    key: "description",
+  },
+  {
+    title: "Start time",
+    sortable: false,
+    key: "startTime",
+  },
+  {
+    title: "End time",
+    sortable: false,
+    key: "endTime",
   },
   {
     title: "Hours",
@@ -182,12 +216,30 @@ export const prepareMembersReportsTableData = (reportData?: MembersReport) => {
   };
 };
 
+export const prepareEmployeeProjectsReportsTableData = (reportData?: EmployeeProjectsReport) => {
+  if (!reportData) {
+    return {
+      projects: [],
+      timeEntries: [],
+    };
+  }
+  // @ts-expect-error type is wrong
+  const projects = mapProjects(reportData.projects);
+
+  const timeEntries = mapTimeEntries(reportData.timeEntries);
+
+  return {
+    projects,
+    timeEntries,
+  };
+};
+
 const mapProjects = (projects: WorkspacesReportProject[]) => {
   return projects.map((project, index) => ({
     id: project.id,
     lp: index + 1,
     name: project.name,
-    admin: project.admin.email,
+    admin: project?.admin?.email,
     workspace: project.workspace.name,
     hours: project.totalTime,
   }));
@@ -209,7 +261,7 @@ const mapTimeEntries = (timeEntries: TimeEntry[]) => {
     id: timeEntry.id,
     lp: index + 1,
     project: timeEntry.projectUser.project.name,
-    member: timeEntry.projectUser.user.email,
+    member: timeEntry?.projectUser?.user?.email,
     description: timeEntry.description,
     startTime: timeEntry.startTime,
     endTime: timeEntry.endTime,

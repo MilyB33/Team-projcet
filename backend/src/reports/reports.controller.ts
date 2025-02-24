@@ -33,9 +33,23 @@ export class ReportsController {
     @Query() params: ProjectsFiltersDto,
     @User() user: PrismaUser,
   ) {
-    const summary = await this.reportsService.projectsSummary(params, user.id);
+    if (user.typeId === 2) {
+      const summary = await this.reportsService.projectsSummary(
+        params,
+        user.id,
+      );
 
-    return summary;
+      return summary;
+    }
+
+    if (user.typeId === 1) {
+      const summary = await this.reportsService.employeeProjectSummary(
+        params,
+        user.id,
+      );
+
+      return summary;
+    }
   }
 
   @Get('members')

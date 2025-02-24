@@ -29,6 +29,16 @@ export class ReportsService {
     return { projects, members };
   }
 
+  async employeeProjectSummary(filters: ProjectsFiltersDto, userId: number) {
+    const projects = await this.getEmployeeProjects(filters, userId);
+    const timeEntries = projects.map((project) => project.timeEntries).flat(1);
+
+    return {
+      projects,
+      timeEntries,
+    };
+  }
+
   async membersSummary(filters: MembersFiltersDto, userId: number) {
     const members = await this.getMembers(filters, userId);
     const timeEntries = members.map((member) => member.timeEntries).flat(1);
@@ -224,6 +234,66 @@ export class ReportsService {
         ...project,
         members: mappedMembers,
         totalTime: this.formatMillisecondsToTime(projectTotalTimeMs),
+      };
+    });
+
+    return mappedProjects;
+  }
+
+  async getEmployeeProjects(filters: ProjectsFiltersDto, userId: number) {
+    const hasDateFilters = filters.startDate && filters.endDate;
+    const timeEntryFilter = hasDateFilters
+      ? this.createTimeEntryFilter(filters)
+      : undefined;
+
+    const projects = await this.prisma.project.findMany({
+      where: {
+        id: { in: filters.projectId },
+      },
+      select: {
+        id: true,
+        name: true,
+        workspace: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        members: {
+          where: { userId },
+          select: {
+            time_entries: {
+              include: {
+                projectUser: { include: { project: true } },
+              },
+              where: {
+                ...(hasDateFilters ? timeEntryFilter : undefined),
+                endTime: { not: null },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const mappedProjects = projects.map((project) => {
+      const flattedTimeEntries = project.members
+        .map((member) => member.time_entries)
+        .flat(1);
+
+      const mappedTimeEntries = flattedTimeEntries.map((timeEntry) => {
+        // @ts-expect-error type is wrong
+        const totalTime = this.calculateTotalTime([timeEntry]);
+
+        return { ...timeEntry, totalTime };
+      });
+      // @ts-expect-error type is wrong
+      const totalTime = this.calculateTotalTime(mappedTimeEntries);
+
+      return {
+        ...project,
+        timeEntries: mappedTimeEntries,
+        totalTime,
       };
     });
 

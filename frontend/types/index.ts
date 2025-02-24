@@ -157,3 +157,8 @@ export type MembersReport = {
   members: WorkspacesReportMember[];
   timeEntries: TimeEntry[];
 };
+
+export type EmployeeProjectsReport = {
+  projects: Project[];
+  timeEntries: (TimeEntry & { totalTime: string })[];
+};
