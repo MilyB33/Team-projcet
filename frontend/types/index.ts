@@ -177,4 +177,6 @@ export type EmployeeSummaryReport = {
   }[];
   totalEntriesCount: number;
   totalProjects: number;
+  totalProjectsWorkedLastWeek: number;
+  totalTimeEntriesLastWeek: number;
 };

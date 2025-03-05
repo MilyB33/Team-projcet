@@ -70,6 +70,11 @@ export class ReportsService {
       };
     });
 
+    const totalProjectsWorkedLastWeek = new Set(
+      lastWeekEntries.map((entry) => entry.projectUser.projectId),
+    ).size;
+    const totalTimeEntriesLastWeek = lastWeekEntries.length;
+
     const totalEntriesCount = timeEntries.length;
     const totalProjects = projects.length;
 
@@ -82,6 +87,8 @@ export class ReportsService {
       totalTimePerProject,
       totalEntriesCount,
       totalProjects,
+      totalProjectsWorkedLastWeek,
+      totalTimeEntriesLastWeek,
     };
   }
 

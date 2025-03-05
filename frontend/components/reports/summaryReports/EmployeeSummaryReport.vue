@@ -84,7 +84,6 @@
 
 <script lang="ts" setup>
 const { loadingSummary, employeeSummary } = useSummaryReport();
-console.log(employeeSummary.value);
 </script>
 
 <style lang="scss" scoped>
