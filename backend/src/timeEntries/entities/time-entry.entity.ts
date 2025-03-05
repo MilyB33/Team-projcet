@@ -28,5 +28,5 @@ export class TimeEntryEntity implements TimeEntry {
 
   @ApiProperty()
   @Exclude()
-  projectUser: ProjectUserEntity;
+  projectUser: Partial<ProjectUserEntity>;
 }

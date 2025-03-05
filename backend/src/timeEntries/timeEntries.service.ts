@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { UpdateTimeEntryDto } from './dto/update-time-entry.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class TimeEntriesService {
@@ -44,6 +45,19 @@ export class TimeEntriesService {
   async findUserEntries(userId: number) {
     return this.prisma.timeEntry.findMany({
       where: { projectUser: { userId } },
+    });
+  }
+
+  async findUnfinishedEntriesStartedNineHoursAgo() {
+    const eightHoursAgo = moment().subtract(9, 'hours').toDate();
+
+    return this.prisma.timeEntry.findMany({
+      where: { createdAt: { lt: eightHoursAgo }, endTime: null },
+      include: {
+        projectUser: {
+          include: { user: true, project: true },
+        },
+      },
     });
   }
 }

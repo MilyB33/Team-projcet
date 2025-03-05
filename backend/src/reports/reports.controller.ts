@@ -61,4 +61,13 @@ export class ReportsController {
 
     return summary;
   }
+
+  @Get('summary')
+  async employeeSummary(@User() user: PrismaUser) {
+    if (user.typeId === 1) {
+      const summary = await this.reportsService.employeeOverviewReport(user.id);
+
+      return summary;
+    }
+  }
 }

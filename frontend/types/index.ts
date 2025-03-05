@@ -162,3 +162,19 @@ export type EmployeeProjectsReport = {
   projects: Project[];
   timeEntries: (TimeEntry & { totalTime: string })[];
 };
+
+export type EmployeeSummaryReport = {
+  projects: Project[];
+  timeEntries: TimeEntry[];
+  totalTime: string;
+  totalTimeLastWeek: string;
+  totalTimeLastMonth: string;
+  totalTimePerProject: {
+    projectId: number;
+    projectName: string;
+    totalTime: string;
+    entryCount: number;
+  }[];
+  totalEntriesCount: number;
+  totalProjects: number;
+};

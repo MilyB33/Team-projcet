@@ -10,6 +10,81 @@ import { ProjectsFiltersDto } from './dto/projects-filters';
 export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async employeeOverviewReport(id: number) {
+    const projects = await this.prisma.project.findMany({
+      where: { members: { some: { userId: id } } },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+      },
+    });
+
+    const timeEntries = await this.prisma.timeEntry.findMany({
+      where: { projectUser: { userId: id } },
+      orderBy: {
+        startTime: 'desc',
+      },
+      select: {
+        id: true,
+        projectUser: { select: { projectId: true } },
+        startTime: true,
+        endTime: true,
+        description: true,
+      },
+    });
+
+    const totalTime = this.calculateTotalTime(timeEntries);
+
+    const lastWeekEntries = timeEntries.filter((entry) => {
+      const entryDate = moment(entry.startTime);
+      return entryDate.isAfter(moment().subtract(7, 'days'));
+    });
+    const totalTimeLastWeek = this.calculateTotalTime(lastWeekEntries);
+
+    const lastMonthEntries = timeEntries.filter((entry) => {
+      const entryDate = moment(entry.startTime);
+      return entryDate.isAfter(moment().subtract(1, 'month'));
+    });
+    const totalTimeLastMonth = this.calculateTotalTime(lastMonthEntries);
+
+    const totalTimePerProject = projects.map((project) => {
+      const projectEntries = timeEntries.filter(
+        (entry) => entry.projectUser.projectId === project.id,
+      );
+      const projectTotalTime = this.calculateTotalTime(projectEntries);
+      return {
+        projectId: project.id,
+        projectName: project.name,
+        totalTime: projectTotalTime,
+        entryCount: projectEntries.length,
+      };
+    });
+
+    const _timeEntries = timeEntries.map((entry) => {
+      const totalTime = this.calculateTotalTime([entry]);
+
+      return {
+        ...entry,
+        totalTime,
+      };
+    });
+
+    const totalEntriesCount = timeEntries.length;
+    const totalProjects = projects.length;
+
+    return {
+      projects: projects,
+      timeEntries: _timeEntries,
+      totalTime: totalTime,
+      totalTimeLastWeek,
+      totalTimeLastMonth,
+      totalTimePerProject,
+      totalEntriesCount,
+      totalProjects,
+    };
+  }
+
   async workspacesSummary(filters: WorkspacesFiltersDto, userId: number) {
     const workspaces = await this.getWorkspaces(filters, userId);
     const projects = workspaces.map((workspace) => workspace.projects).flat(1);

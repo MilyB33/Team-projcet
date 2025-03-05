@@ -12,6 +12,8 @@ import { AuthEntity } from './entity/auth.entity';
 import { LoginDto } from './dto/login.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { RequestResetDto } from './dto/request-reset.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -38,5 +40,15 @@ export class AuthController {
     const user = await this.authService.me(token);
 
     return new UserEntity(user);
+  }
+
+  @Post('request-reset')
+  async requestReset(@Body() { email }: RequestResetDto) {
+    return this.authService.requestPasswordReset(email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() { token, newPassword }: ResetPasswordDto) {
+    return this.authService.resetPassword(token, newPassword);
   }
 }

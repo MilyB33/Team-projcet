@@ -4,19 +4,12 @@
     @submit.prevent="onSubmit"
   >
     <v-text-field
-      label="Email"
-      variant="outlined"
-      v-model="email"
-      :error-messages="emailError"
-    ></v-text-field>
-
-    <v-text-field
-      label="Password"
+      label="New Password"
       variant="outlined"
       :type="fieldType"
       hint="Enter a strong password"
-      v-model="password"
-      :error-messages="passwordError"
+      v-model="newPassword"
+      :error-messages="newPasswordError"
     >
       <template v-slot:append-inner>
         <v-btn
@@ -31,44 +24,28 @@
     <v-btn
       type="submit"
       color="pink"
-      :disabled="isLogging"
-      >Log in</v-btn
+      :disabled="isResettingPassword"
+      >Reset</v-btn
     >
-
-    <p class="text-subtitle-2">
-      Don't have an account?
-      <NuxtLink
-        class="text-black"
-        to="/create-account"
-      >
-        Create one now!
-      </NuxtLink>
-    </p>
-
-    <p class="text-subtitle-2">
-      <NuxtLink
-        class="text-black"
-        to="/request-reset-password/"
-        >Forgot password?</NuxtLink
-      >
-    </p>
   </form>
 </template>
 
 <script lang="ts" setup>
 const isPasswordVisible = ref(false);
 
-const form = useForm({ validationSchema: signInTypedSchema });
-const { value: email, errorMessage: emailError } = useField<string>("email");
-const { value: password, errorMessage: passwordError } = useField<string>("password");
-const { login, isLogging } = useAuth();
+const route = useRoute();
 
 const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value;
 };
 
+const form = useForm({ validationSchema: resetPasswordTypedSchema });
+const { value: newPassword, errorMessage: newPasswordError } = useField<string>("newPassword");
+
+const { resetPassword, isResettingPassword } = useAuth();
+
 const onSubmit = form.handleSubmit((values) => {
-  login(values);
+  resetPassword({ token: route.query.token as string, newPassword: values.newPassword });
 });
 
 const fieldType = computed(() => {

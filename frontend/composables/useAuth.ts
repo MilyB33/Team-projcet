@@ -48,6 +48,31 @@ export const useAuth = () => {
     navigateTo("/login");
   };
 
+  const { mutate: requestPasswordReset, isPending: isRequestingPasswordReset } = useMutation({
+    mutationFn: async (email: string): Promise<{ message: string }> =>
+      (await client.post("/auth/request-reset/", { email })).data,
+    onSuccess: () => {
+      snackbar.success("Reset link was sent. Check your email inbox!");
+    },
+    onError: () => {
+      snackbar.error();
+    },
+  });
+
+  const { mutateAsync: resetPassword, isPending: isResettingPassword } = useMutation({
+    mutationFn: async (data: {
+      token: string;
+      newPassword: string;
+    }): Promise<{ message: string }> => (await client.post("/auth/reset-password/", data)).data,
+    onSuccess: () => {
+      snackbar.success("Successfully changed password. You can now log in!");
+      logout();
+    },
+    onError: () => {
+      snackbar.error();
+    },
+  });
+
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: [API_KEY.USER],
     queryFn: async (): Promise<User> => (await client.get("/auth/me/")).data,
@@ -60,9 +85,13 @@ export const useAuth = () => {
     login,
     createAccount,
     logout,
+    requestPasswordReset,
+    resetPassword,
     isLogging,
     isCreatingAccount,
     user,
     isLoadingUser,
+    isRequestingPasswordReset,
+    isResettingPassword,
   };
 };
