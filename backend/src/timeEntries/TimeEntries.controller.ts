@@ -22,7 +22,6 @@ import { User as PrismaUser } from '@prisma/client';
 import { CreateTimeEntryDto } from './dto/create-time-entry.dto';
 import { TimeEntryEntity } from './entities/time-entry.entity';
 import { UpdateTimeEntryDto } from './dto/update-time-entry.dto';
-import { EndTimeEntryDto } from './dto/end-time-entry.dto';
 
 @ApiBearerAuth()
 @Controller('time_entries')
@@ -39,21 +38,37 @@ export class TimeEntriesController {
     return timeEntries.map((timeEntry) => new TimeEntryEntity(timeEntry));
   }
 
+  @Get('unfinished')
+  @ApiOkResponse({ type: TimeEntryEntity })
+  async getLastUnfinishedTimeEntry(@User() user: PrismaUser) {
+    const timeEntry =
+      await this.timeEntriesService.findUserLastUnfinishedTimeEntry(user.id);
+
+    return new TimeEntryEntity(timeEntry);
+  }
+
+  @Get('last_week')
+  @ApiOkResponse({ type: TimeEntryEntity, isArray: true })
+  async getLastWeekEntries(@User() user: PrismaUser) {
+    const timeEntries = await this.timeEntriesService.findLastWeekEntries(
+      user.id,
+    );
+
+    return timeEntries.map((entry) => new TimeEntryEntity(entry));
+  }
+
   @Post()
   @ApiCreatedResponse({ type: TimeEntryEntity })
-  async create(@Body() data: CreateTimeEntryDto) {
-    const timeEntry = await this.timeEntriesService.create(data);
+  async create(@Body() data: CreateTimeEntryDto, @User() user: PrismaUser) {
+    const timeEntry = await this.timeEntriesService.create(data, user.id);
 
     return new TimeEntryEntity(timeEntry);
   }
 
   @Post(':id/end')
   @ApiOkResponse({ type: TimeEntryEntity })
-  async end(
-    @Body() data: EndTimeEntryDto,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    const timeEntry = await this.timeEntriesService.update(data, id);
+  async end(@Param('id', ParseIntPipe) id: number, @User() user: PrismaUser) {
+    const timeEntry = await this.timeEntriesService.end(id, user.id);
 
     return new TimeEntryEntity(timeEntry);
   }

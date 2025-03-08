@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <div>
+      <TrackerForm />
+    </div>
     <v-row
       align="center"
       justify="space-between"
@@ -287,15 +290,15 @@ export default {
       this.timeError = startTime >= endTime;
     },
     formatDate(datetime) {
-  if (!datetime) return "Brak danych";
-  const date = new Date(datetime);
+      if (!datetime) return "Brak danych";
+      const date = new Date(datetime);
 
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
 
-  return `${hours}:${minutes}:${seconds}`;
-},
+      return `${hours}:${minutes}:${seconds}`;
+    },
 
     closeEditingDialog() {
       this.timeError = false;
@@ -320,7 +323,7 @@ export default {
         console.error("No task to save");
         return;
       }
-  
+
       // Sprawdzamy, czy projekt nie został zmieniony
       if (this.editingTask.project !== this.editingTask.previousProject) {
         // Przypisz nazwę projektu na podstawie id, jeśli projekt się zmienił
@@ -544,13 +547,13 @@ export default {
 .no-background {
   background-color: transparent !important;
   box-shadow: none !important;
-  padding: 4px; /* Zmniejszenie obszaru interakcji */
-  border-radius: 50%; /* Zaokrąglenie */
+  padding: 4px;
+  border-radius: 50%;
   transition: background-color 0.2s ease;
 }
 .no-background:hover {
-  background-color: rgba(0, 0, 0, 0.05); /* Subtelny efekt hover */
+  background-color: rgba(0, 0, 0, 0.05);
   box-shadow: none;
-  transform: scale(0.9); /* Opcjonalne zmniejszenie przycisku na hover */
+  transform: scale(0.9);
 }
 </style>

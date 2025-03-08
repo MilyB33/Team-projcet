@@ -257,6 +257,24 @@ export class ProjectsService {
     return this.prisma.projectUser.findMany({ where: { projectId } });
   }
 
+  async findProjectMember(projectId: number, userId: number) {
+    return this.prisma.projectUser.findFirst({
+      where: {
+        projectId,
+        userId,
+      },
+    });
+  }
+
+  async findMemberByEntryId(entryId: number, userId: number) {
+    return this.prisma.projectUser.findFirst({
+      where: {
+        time_entries: { some: { id: entryId } },
+        userId,
+      },
+    });
+  }
+
   async findByAccessCode(accessCode: string) {
     return this.prisma.project.findFirst({
       where: { accessCode },
@@ -353,13 +371,13 @@ export class ProjectsService {
 
   // TODO: move to util or common service
   private calculateTotalTime(startTime: Date) {
-    const currentTime = moment(); // Get the current time
-    const start = moment(startTime); // Convert startTime to moment object
-    const totalTime = currentTime.diff(start, 'milliseconds'); // Calculate difference in milliseconds
+    const currentTime = moment();
+    const start = moment(startTime);
+    const totalTime = currentTime.diff(start, 'milliseconds');
 
     const duration = moment.duration(totalTime);
-    const hours = Math.floor(duration.asHours()); // Total hours
-    const minutes = duration.minutes(); // Remaining minutes
+    const hours = Math.floor(duration.asHours());
+    const minutes = duration.minutes();
 
     const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
