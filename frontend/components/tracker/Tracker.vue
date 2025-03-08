@@ -466,7 +466,7 @@ export default {
 };
 </script>
 
-<style>
+<!-- <style>
 .project-list {
   overflow-y: auto;
 }
@@ -556,4 +556,4 @@ export default {
   box-shadow: none;
   transform: scale(0.9);
 }
-</style>
+</style> -->

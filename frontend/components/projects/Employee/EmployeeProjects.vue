@@ -26,5 +26,4 @@
 
 <script lang="ts" setup>
 const { loadingProjects, projects } = useProjects();
-console.log(loadingProjects, projects);
 </script>

@@ -5,6 +5,18 @@
     hide-default-footer
     style="min-height: 300px"
   >
+    <template v-slot:item.name="{ item }">
+      <div>
+        <NuxtLink
+          :to="`/projects/${item.id}`"
+          class="text-black"
+        >
+          <span>
+            {{ item.name }}
+          </span>
+        </NuxtLink>
+      </div>
+    </template>
     <template v-slot:item.actions="{ item }">
       <LeaveProject :projectId="item.id" />
     </template>

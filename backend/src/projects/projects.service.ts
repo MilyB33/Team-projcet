@@ -104,6 +104,18 @@ export class ProjectsService {
     });
   }
 
+  async findEmployeeProject(id: number, userId: number) {
+    return this.prisma.project.findUnique({
+      where: { id },
+      include: {
+        members: {
+          where: { userId },
+          include: { time_entries: true },
+        },
+      },
+    });
+  }
+
   async findUserProjects(user: UserEntity) {
     // TODO: change this to base on type name rather id
     const isEmployer = user.typeId === 2;

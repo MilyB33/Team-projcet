@@ -39,10 +39,14 @@ export class TimeEntriesService {
       throw new BadRequestException('You are not a member of this project!');
     }
 
-    return this.update({ endTime: new Date() }, entryId);
+    return this.update({ endTime: new Date() }, entryId, userId);
   }
 
-  async update(updateTimeEntryDto: UpdateTimeEntryDto, id: number) {
+  async update(
+    updateTimeEntryDto: UpdateTimeEntryDto,
+    id: number,
+    userId: number,
+  ) {
     if (updateTimeEntryDto.endTime && updateTimeEntryDto.startTime) {
       if (
         new Date(updateTimeEntryDto.endTime) <=
@@ -54,9 +58,20 @@ export class TimeEntriesService {
       }
     }
 
+    // TODO: change this to use service
+    const projectUser = await this.prisma.projectUser.findFirst({
+      where: { projectId: updateTimeEntryDto.projectId, userId },
+    });
+
+    if (!projectUser) {
+      throw new BadRequestException("You don't belong to this project!");
+    }
+
+    delete updateTimeEntryDto.projectId;
+
     return this.prisma.timeEntry.update({
       where: { id },
-      data: updateTimeEntryDto,
+      data: { ...updateTimeEntryDto, projectUserId: projectUser.id },
     });
   }
 

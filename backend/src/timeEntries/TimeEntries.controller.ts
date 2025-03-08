@@ -78,8 +78,9 @@ export class TimeEntriesController {
   async update(
     @Body() data: UpdateTimeEntryDto,
     @Param('id', ParseIntPipe) id: number,
+    @User() user: PrismaUser,
   ) {
-    const timeEntry = await this.timeEntriesService.update(data, id);
+    const timeEntry = await this.timeEntriesService.update(data, id, user.id);
 
     return new TimeEntryEntity(timeEntry);
   }
