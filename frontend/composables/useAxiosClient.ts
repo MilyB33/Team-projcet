@@ -1,15 +1,17 @@
-import axios, { isAxiosError } from "axios";
+import axios, { isAxiosError, type AxiosInstance } from "axios";
 import { COOKIES } from "~/constant";
 
 type AxiosClientContext = {
-  client: axios.AxiosInstance;
+  client: AxiosInstance;
   isAuthToken: boolean;
   setAuthToken: (token: string) => void;
+  removeAuthToken: () => void;
 };
 
 export const useInitializeAxiosClient = () => {
+  const runtimeConfig = useRuntimeConfig();
   const cookie = useCookie(COOKIES.AUTH_TOKEN);
-  const client = axios.create({ baseURL: "http://localhost:9000/api" });
+  const client = axios.create({ baseURL: runtimeConfig.public.API_URL });
   const isClientTokenSet = ref(false);
 
   client.interceptors.response.use(
@@ -32,6 +34,12 @@ export const useInitializeAxiosClient = () => {
     isClientTokenSet.value = true;
   };
 
+  const removeAuthToken = () => {
+    cookie.value = null;
+    delete client.defaults.headers.common["Authorization"];
+    isClientTokenSet.value = false;
+  };
+
   onMounted(() => {
     if (cookie.value) {
       client.defaults.headers.common["Authorization"] = `bearer ${cookie.value}`;
@@ -44,6 +52,7 @@ export const useInitializeAxiosClient = () => {
   return {
     client,
     setAuthToken,
+    removeAuthToken,
     isAuthToken,
   };
 };

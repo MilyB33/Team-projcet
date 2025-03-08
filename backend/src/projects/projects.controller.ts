@@ -69,25 +69,32 @@ export class ProjectsController {
     return new ProjectEntity(project);
   }
 
-  @Post(':id/join')
+  @Post('join')
   @ApiCreatedResponse({ type: ProjectUserEntity })
-  async join(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() joinProjectDto: JoinProjectDto,
-  ) {
-    const member = await this.projectsService.join(id, joinProjectDto);
+  async join(@User() user: PrismaUser, @Body() joinProjectDto: JoinProjectDto) {
+    const member = await this.projectsService.join(
+      joinProjectDto.accessCode,
+      user,
+    );
 
     return new ProjectUserEntity(member);
   }
 
-  @Delete('id')
+  @Delete(':id/leave')
+  @ApiOkResponse({ type: String })
+  async leave(@Param('id', ParseIntPipe) id: number, @User() user) {
+    await this.projectsService.leave(id, user);
+    return { message: 'Successfully left the project.' };
+  }
+
+  @Delete(':id')
   @ApiOkResponse({ type: ProjectEntity })
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.projectsService.remove(id);
     return { message: 'Project was successfully removed' };
   }
 
-  @Get('id')
+  @Get(':id')
   @ApiOkResponse({ type: ProjectEntity })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const project = await this.projectsService.findOne(id);
@@ -156,9 +163,35 @@ export class ProjectsController {
   }
 
   @Get(':id/members')
-  @ApiOkResponse({ type: ProjectUserEntity })
+  @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
   async findProjectMembers(@Param('id', ParseIntPipe) id: number) {
     const members = await this.projectsService.findProjectMembers(id);
+
+    return members.map((member) => new ProjectUserEntity(member));
+  }
+
+  @Get()
+  @ApiOkResponse({ type: ProjectEntity, isArray: true })
+  async findAllProjects(@User() user: PrismaUser) {
+    const projects = await this.projectsService.findUserProjects(user);
+
+    return projects.map((project) => new ProjectEntity(project));
+  }
+
+  @Get('members/all')
+  @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
+  async findAllProjectCreatorMembers(@User() user: PrismaUser) {
+    const members = await this.projectsService.findUniqueProjectMembers(
+      user.id,
+    );
+
+    return members.map((member) => new ProjectUserEntity(member));
+  }
+
+  @Get(':id/members/active')
+  @ApiOkResponse({ type: ProjectUserEntity, isArray: true })
+  async findAllActiveMembers(@Param('id', ParseIntPipe) id: number) {
+    const members = await this.projectsService.findActiveMembers(id);
 
     return members.map((member) => new ProjectUserEntity(member));
   }

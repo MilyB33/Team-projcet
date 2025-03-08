@@ -21,17 +21,16 @@ model AccountType {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  first_name String
-  last_name  String
-  email      String      @unique
-  password   String
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  company    String?
-  type       AccountType @relation(fields: [typeId], references: [id])
-  typeId     Int
-
+  id           Int           @id @default(autoincrement())
+  first_name   String
+  last_name    String
+  email        String        @unique
+  password     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  company      String?
+  type         AccountType   @relation(fields: [typeId], references: [id])
+  typeId       Int
   workspaces   Workspace[]
   own_projects Project[]
   projects     ProjectUser[]
@@ -61,20 +60,23 @@ model Project {
 }
 
 model ProjectUser {
-  id        Int                @id @default(autoincrement())
-  projectId Int
-  userId    Int
-  joinedAt  DateTime           @default(now())
-  project   Project            @relation(fields: [projectId], references: [id])
-  user      User               @relation(fields: [userId], references: [id])
-  groups    ProjectUserGroup[]
+  id           Int                @id @default(autoincrement())
+  projectId    Int
+  userId       Int
+  joinedAt     DateTime           @default(now())
+  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user         User               @relation(fields: [userId], references: [id])
+  groups       ProjectUserGroup[]
+  time_entries TimeEntry[]
+
+  @@unique([projectId, userId])
 }
 
 model Group {
   id        Int                @id @default(autoincrement())
   name      String
   projectId Int
-  project   Project            @relation(fields: [projectId], references: [id])
+  project   Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
   members   ProjectUserGroup[]
 }
 
@@ -83,6 +85,19 @@ model ProjectUserGroup {
   projectUserId Int
   groupId       Int
   joinedAt      DateTime    @default(now())
-  projectUser   ProjectUser @relation(fields: [projectUserId], references: [id])
+  projectUser   ProjectUser @relation(fields: [projectUserId], references: [id], onDelete: Cascade)
   group         Group       @relation(fields: [groupId], references: [id])
+}
+
+model TimeEntry {
+  id            Int       @id @default(autoincrement())
+  projectUserId Int
+  description   String
+  startTime     DateTime
+  endTime       DateTime?
+  createdAt     DateTime  @default(now())
+
+  projectUser ProjectUser @relation(fields: [projectUserId], references: [id], onDelete: Cascade)
+
+  @@index([projectUserId])
 }

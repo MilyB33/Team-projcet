@@ -34,7 +34,7 @@ export class ProjectEntity implements Project {
 
   @ApiProperty()
   @Exclude()
-  workspace: WorkspaceEntity;
+  workspace: Omit<WorkspaceEntity, 'admin' | 'projectsCount'>;
 
   @ApiProperty()
   @Exclude()

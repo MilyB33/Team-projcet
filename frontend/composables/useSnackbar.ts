@@ -3,7 +3,7 @@ import { inject } from "vue";
 type SnackbarContext = {
   snackbar: {
     success: (message: string) => void;
-    error: (message: string) => void;
+    error: (message?: string) => void;
   };
   hide: () => void;
 };

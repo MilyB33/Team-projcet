@@ -44,6 +44,14 @@
         Create one now!
       </NuxtLink>
     </p>
+
+    <p class="text-subtitle-2">
+      <NuxtLink
+        class="text-black"
+        to="/request-reset-password/"
+        >Forgot password?</NuxtLink
+      >
+    </p>
   </form>
 </template>
 

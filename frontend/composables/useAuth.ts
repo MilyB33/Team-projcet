@@ -1,9 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { API_KEY } from "~/constant";
-import type { LoginRequest, LoginResponse, CreateUserRequest, CreateUserResponse } from "~/types";
+import type {
+  LoginRequest,
+  LoginResponse,
+  CreateUserRequest,
+  CreateUserResponse,
+  User,
+} from "~/types";
 
 export const useAuth = () => {
-  const { client, setAuthToken, isAuthToken } = useAxiosClient();
+  const { client, setAuthToken, removeAuthToken, isAuthToken } = useAxiosClient();
   const queryClient = useQueryClient();
   const { snackbar } = useSnackbar();
 
@@ -33,9 +39,43 @@ export const useAuth = () => {
     },
   });
 
+  const logout = () => {
+    removeAuthToken();
+    queryClient.resetQueries({ queryKey: [API_KEY.USER] });
+    queryClient.resetQueries({ queryKey: [API_KEY.WORKSPACES] });
+    queryClient.resetQueries({ queryKey: [API_KEY.PROJECTS] });
+
+    navigateTo("/login");
+  };
+
+  const { mutate: requestPasswordReset, isPending: isRequestingPasswordReset } = useMutation({
+    mutationFn: async (email: string): Promise<{ message: string }> =>
+      (await client.post("/auth/request-reset/", { email })).data,
+    onSuccess: () => {
+      snackbar.success("Reset link was sent. Check your email inbox!");
+    },
+    onError: () => {
+      snackbar.error();
+    },
+  });
+
+  const { mutateAsync: resetPassword, isPending: isResettingPassword } = useMutation({
+    mutationFn: async (data: {
+      token: string;
+      newPassword: string;
+    }): Promise<{ message: string }> => (await client.post("/auth/reset-password/", data)).data,
+    onSuccess: () => {
+      snackbar.success("Successfully changed password. You can now log in!");
+      logout();
+    },
+    onError: () => {
+      snackbar.error();
+    },
+  });
+
   const { data: user, isLoading: isLoadingUser } = useQuery({
     queryKey: [API_KEY.USER],
-    queryFn: () => client.get("/auth/me/"),
+    queryFn: async (): Promise<User> => (await client.get("/auth/me/")).data,
     enabled: isAuthToken,
     retry: 0,
     retryOnMount: false,
@@ -44,9 +84,14 @@ export const useAuth = () => {
   return {
     login,
     createAccount,
+    logout,
+    requestPasswordReset,
+    resetPassword,
     isLogging,
     isCreatingAccount,
     user,
     isLoadingUser,
+    isRequestingPasswordReset,
+    isResettingPassword,
   };
 };

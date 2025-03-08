@@ -14,7 +14,12 @@
       class="mt-auto"
       prepend-icon="mdi-logout"
       color="red"
+      @click="logout"
       >Log out</v-btn
     >
   </v-list>
 </template>
+
+<script lang="ts" setup>
+const { logout } = useAuth();
+</script>

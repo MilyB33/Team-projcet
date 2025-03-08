@@ -23,9 +23,16 @@
         class="my-2"
       ></v-divider>
 
-      <v-btn variant="text"> Log out </v-btn>
+      <v-btn
+        variant="text"
+        @click="logout"
+      >
+        Log out
+      </v-btn>
     </v-list>
   </v-menu>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const { logout } = useAuth();
+</script>
