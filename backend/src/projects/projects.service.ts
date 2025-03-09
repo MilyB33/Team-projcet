@@ -275,6 +275,9 @@ export class ProjectsService {
         projectId,
         userId,
       },
+      include: {
+        project: true,
+      },
     });
   }
 

@@ -126,7 +126,6 @@ export class ReportsService {
     const timeEntries = members.map((member) => member.timeEntries).flat(1);
 
     const mappedTimeEntries = timeEntries.map((timeEntry) => {
-      // @ts-expect-error this entry has more properties
       const totalTime = this.calculateTotalTime([timeEntry]);
 
       return {
@@ -364,12 +363,11 @@ export class ReportsService {
         .flat(1);
 
       const mappedTimeEntries = flattedTimeEntries.map((timeEntry) => {
-        // @ts-expect-error type is wrong
         const totalTime = this.calculateTotalTime([timeEntry]);
 
         return { ...timeEntry, totalTime };
       });
-      // @ts-expect-error type is wrong
+
       const totalTime = this.calculateTotalTime(mappedTimeEntries);
 
       return {

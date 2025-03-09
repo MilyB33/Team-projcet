@@ -24,7 +24,7 @@ export class ProjectUserEntity implements ProjectUser {
 
   @ApiProperty()
   @Exclude()
-  project?: ProjectEntity;
+  project?: Partial<ProjectEntity>;
 
   @ApiProperty()
   @Exclude()

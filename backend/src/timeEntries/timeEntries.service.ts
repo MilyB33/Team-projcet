@@ -30,7 +30,7 @@ export class TimeEntriesService {
   }
 
   async end(entryId: number, userId: number) {
-    const projectUser = this.projectsService.findMemberByEntryId(
+    const projectUser = await this.projectsService.findMemberByEntryId(
       entryId,
       userId,
     );
@@ -39,7 +39,11 @@ export class TimeEntriesService {
       throw new BadRequestException('You are not a member of this project!');
     }
 
-    return this.update({ endTime: new Date() }, entryId, userId);
+    return this.update(
+      { endTime: new Date(), projectId: projectUser.projectId },
+      entryId,
+      userId,
+    );
   }
 
   async update(
@@ -107,7 +111,11 @@ export class TimeEntriesService {
         createdAt: { gte: oneWeekAgo },
         endTime: { not: null },
       },
-      include: { projectUser: true },
+      include: {
+        projectUser: {
+          include: { project: true },
+        },
+      },
     });
   }
 

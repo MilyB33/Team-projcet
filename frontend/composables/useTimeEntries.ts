@@ -14,6 +14,7 @@ export const useTimeEntries = () => {
     queryClient.invalidateQueries({ queryKey: [API_KEY.PROJECTS] });
     queryClient.invalidateQueries({ queryKey: [API_KEY.SUMMARY_REPORT] });
     queryClient.invalidateQueries({ queryKey: [API_KEY.WORKSPACES_REPORT] });
+    queryClient.invalidateQueries({ queryKey: [API_KEY.LAST_WEEK_ENTRIES] });
   };
 
   const { data: lastTimeEntry, isLoading: loadingLastTimeEntry } = useQuery({
@@ -67,6 +68,13 @@ export const useTimeEntries = () => {
 
       return (await client.patch(`time_entries/${entryId}/`, rest)).data;
     },
+    onSuccess: () => {
+      invalidateQueries();
+      snackbar.success("Entry successfully updated!");
+    },
+    onError: () => {
+      snackbar.error();
+    },
   });
 
   onBeforeRouteLeave(() => {
@@ -81,6 +89,8 @@ export const useTimeEntries = () => {
     endingTimeEntry,
     isDeletingEntry,
     isUpdatingEntry,
+    lastWeekEntries,
+    loadingLastWeekEntries,
     createEntry,
     endEntry,
     deleteEntry,
