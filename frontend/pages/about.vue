@@ -6,36 +6,23 @@
         <p>
           Clocker is a project management and time-tracking software designed to help users monitor their tasks efficiently.
         </p>
-        <v-list>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-account-multiple</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Manage projects assigned to users</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-clock-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Track time spent on each project</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-chart-bar</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Generate reports for better insights</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        <ul class="d-flex flex-column ga-2 pa-0 mt-2" style="list-style: none;">
+          <li class="d-flex align-center ga-2">
+            <v-icon>mdi-account-multiple</v-icon>
+            <span>Manage projects assigned to users</span>
+          </li>
+          <li class="d-flex align-center ga-2">
+            <v-icon>mdi-clock-outline</v-icon>
+            <span>Track time spent on each project</span>
+          </li>
+          <li class="d-flex align-center ga-2">
+            <v-icon>mdi-chart-bar</v-icon>
+            <span>Generate reports for better insights</span>
+          </li>
+        </ul>
       </v-card-text>
     </v-card>
 
-    <!-- FAQ Section with Header -->
     <v-card elevation="2" class="pa-5 mt-5">
       <v-card-title class="text-h5">Frequently Asked Questions</v-card-title>
       <v-expansion-panels>
