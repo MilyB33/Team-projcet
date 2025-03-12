@@ -25,7 +25,7 @@ export const useProjects = () => {
       snackbar.success("Successfully joined to project.");
     },
     onError: () => {
-      snackbar.error();
+      snackbar.error("Wrong code provided!");
     },
   });
 

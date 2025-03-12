@@ -2,6 +2,10 @@
   <div class="d-flex flex-column ga-4 h-100">
     <div class="d-flex align-center">
       <h2>Projects</h2>
+
+      <div class="ml-auto">
+        <JoinProjectModal />
+      </div>
     </div>
 
     <div

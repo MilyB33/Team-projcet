@@ -23,6 +23,12 @@
 </template>
 
 <script lang="ts" setup>
+type JoinProjectProps = {
+  afterSubmit?: () => void;
+};
+
+const props = defineProps<JoinProjectProps>();
+
 const form = useForm({ validationSchema: joinProjectTypedSchema });
 
 const { value: accessCode, errorMessage: accessCodeError } = useField("accessCode");
@@ -33,7 +39,12 @@ const isAccessCodeEmpty = computed(() => {
   return !form.values.accessCode?.length;
 });
 
-const onSubmit = form.handleSubmit((values) => {
-  joinProject(values);
+const onSubmit = form.handleSubmit(async (values) => {
+  try {
+    await joinProject(values);
+    props.afterSubmit?.();
+  } catch (error) {
+    console.error();
+  }
 });
 </script>
