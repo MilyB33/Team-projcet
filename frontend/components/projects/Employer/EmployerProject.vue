@@ -35,8 +35,8 @@
     />
 
     <EmployerProjectActiveMembers
-      v-if="activeMembers?.length && !loadingActiveMembers"
-      :activeMembers="activeMembers"
+      v-if="!loadingActiveMembers"
+      :activeMembers="activeMembers || []"
     />
   </div>
 </template>
