@@ -4,7 +4,7 @@
       :headers="headers"
       :items="groupedEntries"
       item-value="id"
-      :group-by="[{ key: 'day', order: 'asc' }]"
+      :group-by="[{ key: 'day', order: false }]"
       class="elevation-1"
       dense
       hide-default-footer
@@ -116,25 +116,35 @@ const formatDate = (datetime: Date) => {
 const groupedEntries = computed(() => {
   if (!lastWeekEntries.value) return [];
 
-  return lastWeekEntries.value.map((entry) => {
-    const entryDate = moment(entry.startTime).startOf("day");
-    let dayLabel = entryDate.format("dddd");
+  const today = moment().startOf("day");
+  const yesterday = moment().subtract(1, "day").startOf("day");
 
-    if (entryDate.isSame(moment().startOf("day"), "day")) {
-      dayLabel = "Today";
-    } else if (entryDate.isSame(moment().subtract(1, "day").startOf("day"), "day")) {
-      dayLabel = "Yesterday";
-    }
+  return lastWeekEntries.value
+    .map((entry) => {
+      const entryDate = moment(entry.startTime).startOf("day");
+      let dayLabel = entryDate.format("dddd");
 
-    return {
-      ...entry,
-      projectId: entry.projectUser.projectId,
-      description: entry.description,
-      projectName: entry.projectUser.project.name,
-      day: dayLabel,
-      totalTime: formatTotalTime(moment(entry.endTime).diff(moment(entry.startTime), "seconds")),
-    };
-  });
+      if (entryDate.isSame(today, "day")) {
+        dayLabel = "Today";
+      } else if (entryDate.isSame(yesterday, "day")) {
+        dayLabel = "Yesterday";
+      }
+
+      return {
+        ...entry,
+        projectId: entry.projectUser.projectId,
+        projectName: entry.projectUser.project.name,
+        day: dayLabel,
+        totalTime: formatTotalTime(moment(entry.endTime).diff(moment(entry.startTime), "seconds")),
+      };
+    })
+    .sort((a, b) => {
+      const order = { Today: 0, Yesterday: 1 };
+      return (
+        // @ts-ignore
+        (order[a.day] ?? 2) - (order[b.day] ?? 2) || moment(b.startTime).diff(moment(a.startTime))
+      );
+    });
 });
 
 const headers = [
