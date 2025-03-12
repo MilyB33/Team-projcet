@@ -1,5 +1,12 @@
 import moment from "moment";
-import type { CreateProjectRequest, Project, ProjectUser, User, Workspace } from "~/types";
+import type {
+  CreateProjectRequest,
+  Project,
+  ProjectUser,
+  TimeEntry,
+  User,
+  Workspace,
+} from "~/types";
 
 export const prepareWorkspacesItems = (workspaces: Workspace[]) => {
   return workspaces.map((workspace) => ({
@@ -199,7 +206,69 @@ export const prepareEmployerActiveMembersTableData = (members: ProjectUser[]) =>
     lp: index + 1,
     name: `${member.user.first_name} ${member.user.last_name}`,
     email: member.user.email,
-    startTime: member.time_entries[0].startTime,
+    startTime: moment(member.time_entries[0].startTime).format("DD-MM-YYYY HH:mm:ss"),
     hours: member.totalTime,
+  }));
+};
+
+export const employeeProjectsTimeEntriesHeaders = [
+  {
+    title: "Lp.",
+    sortable: false,
+    key: "lp",
+  },
+  {
+    title: "Description",
+    sortable: false,
+    key: "description",
+  },
+  {
+    title: "Start time",
+    sortable: false,
+    key: "startTime",
+  },
+  {
+    title: "End time",
+    sortable: false,
+    key: "endTime",
+  },
+  {
+    title: "Created at",
+    sortable: false,
+    key: "creationDate",
+  },
+  {
+    title: "Total time",
+    sortable: false,
+    key: "totalTime",
+  },
+  {
+    title: "Actions",
+    sortable: false,
+    key: "actions",
+  },
+];
+
+export const prepareEmployeeProjectsTimeEntries = (timeEntries: TimeEntry[]) => {
+  return timeEntries.map((timeEntry, index) => ({
+    id: timeEntry.id,
+    timeEntry,
+    lp: index + 1,
+    description: timeEntry.description,
+    startTime: moment(timeEntry.startTime).format("DD-MM-YYYY HH:mm:ss"),
+    endTime: moment(timeEntry.endTime).format("DD-MM-YYYY HH:mm:ss"),
+    creationDate: timeEntry.createdAt,
+    totalTime:
+      moment
+        .utc(
+          moment
+            .duration(moment(timeEntry.endTime).diff(moment(timeEntry.startTime)))
+            .asMilliseconds() < 60000
+            ? 60000
+            : moment
+                .duration(moment(timeEntry.endTime).diff(moment(timeEntry.startTime)))
+                .asMilliseconds(),
+        )
+        .format("HH:mm") + " hours",
   }));
 };

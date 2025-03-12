@@ -19,28 +19,26 @@
       ></v-progress-circular>
     </div>
 
-    <EmployerProjectHeader
+    <EmployeeProjectHeader
       v-if="project && !loadingProject"
       :project="project"
     />
 
-    <EmployerProjectEdit
-      v-if="project && !loadingProject"
-      :project="project"
-    />
+    <div v-if="project && !loadingProject">
+      <h2>Description:</h2>
+      <p>{{ project?.description }}</p>
+    </div>
 
-    <EmployerProjectMembers
-      v-if="project && !loadingProject"
-      :project="project"
-    />
+    <v-divider />
 
-    <EmployerProjectActiveMembers
-      v-if="activeMembers?.length && !loadingActiveMembers"
-      :activeMembers="activeMembers"
+    <EmployeeProjectTimeEntries
+      v-if="project && !loadingProject"
+      :timeEntries="project.members[0].time_entries"
+      :projectId="project.id"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-const { project, loadingProject, activeMembers, loadingActiveMembers } = useProject();
+const { project, loadingProject } = useProject();
 </script>

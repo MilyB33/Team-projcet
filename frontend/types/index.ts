@@ -180,3 +180,14 @@ export type EmployeeSummaryReport = {
   totalProjectsWorkedLastWeek: number;
   totalTimeEntriesLastWeek: number;
 };
+
+export type CreateTimeEntryRequest = {
+  description: string;
+  projectId: number;
+  startTime: Date;
+};
+
+export type UpdateTimeEntryRequest = Partial<CreateTimeEntryRequest> & {
+  entryId: number;
+  endTime?: Date;
+};

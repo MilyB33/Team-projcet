@@ -82,7 +82,7 @@ export class ProjectsController {
 
   @Delete(':id/leave')
   @ApiOkResponse({ type: String })
-  async leave(@Param('id', ParseIntPipe) id: number, @User() user) {
+  async leave(@Param('id', ParseIntPipe) id: number, @User() user: PrismaUser) {
     await this.projectsService.leave(id, user);
     return { message: 'Successfully left the project.' };
   }
@@ -96,10 +96,24 @@ export class ProjectsController {
 
   @Get(':id')
   @ApiOkResponse({ type: ProjectEntity })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    const project = await this.projectsService.findOne(id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @User() user: PrismaUser,
+  ) {
+    if (user.typeId === 2) {
+      const project = await this.projectsService.findOne(id);
 
-    return new ProjectEntity(project);
+      return new ProjectEntity(project);
+    }
+
+    if (user.typeId === 1) {
+      const project = await this.projectsService.findEmployeeProject(
+        id,
+        user.id,
+      );
+
+      return new ProjectEntity(project);
+    }
   }
 
   @Post(':id/groups')

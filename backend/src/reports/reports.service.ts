@@ -21,7 +21,7 @@ export class ReportsService {
     });
 
     const timeEntries = await this.prisma.timeEntry.findMany({
-      where: { projectUser: { userId: id } },
+      where: { projectUser: { userId: id }, endTime: { not: null } },
       orderBy: {
         startTime: 'desc',
       },
@@ -126,7 +126,6 @@ export class ReportsService {
     const timeEntries = members.map((member) => member.timeEntries).flat(1);
 
     const mappedTimeEntries = timeEntries.map((timeEntry) => {
-      // @ts-expect-error this entry has more properties
       const totalTime = this.calculateTotalTime([timeEntry]);
 
       return {
@@ -364,12 +363,11 @@ export class ReportsService {
         .flat(1);
 
       const mappedTimeEntries = flattedTimeEntries.map((timeEntry) => {
-        // @ts-expect-error type is wrong
         const totalTime = this.calculateTotalTime([timeEntry]);
 
         return { ...timeEntry, totalTime };
       });
-      // @ts-expect-error type is wrong
+
       const totalTime = this.calculateTotalTime(mappedTimeEntries);
 
       return {
@@ -478,13 +476,14 @@ export class ReportsService {
     const totalTime = timeEntries.reduce((acc, entry) => {
       const start = moment(entry.startTime);
       const end = moment(entry.endTime);
-      return acc + end.diff(start, 'milliseconds'); // Sum in milliseconds
+      return acc + end.diff(start, 'milliseconds');
     }, 0);
 
-    const duration = moment.duration(totalTime);
-    const hours = Math.floor(duration.asHours()); // Total hours
-    const minutes = duration.minutes(); // Remaining minutes
+    const adjustedTotalTime = totalTime < 60000 ? 60000 : totalTime;
 
+    const duration = moment.duration(adjustedTotalTime);
+    const hours = Math.floor(duration.asHours());
+    const minutes = duration.minutes();
     const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
     return formattedTime;

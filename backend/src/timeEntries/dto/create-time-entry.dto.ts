@@ -1,5 +1,5 @@
-import { Optional } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTimeEntryDto {
@@ -15,16 +15,7 @@ export class CreateTimeEntryDto {
 
   @IsDate()
   @IsNotEmpty()
+  @Type(() => Date)
   @ApiProperty()
   startTime: Date;
-
-  @IsDate()
-  @ApiProperty()
-  @Optional()
-  endTime: Date | null;
-
-  @IsInt()
-  @IsNotEmpty()
-  @ApiProperty()
-  projectUserId: number;
 }

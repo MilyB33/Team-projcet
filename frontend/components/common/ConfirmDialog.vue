@@ -29,7 +29,12 @@
           <v-btn
             size="small"
             color="blue"
-            @click="onConfirm"
+            @click="
+              async () => {
+                await onConfirm();
+                isActive.value = false;
+              }
+            "
             >Confirm</v-btn
           >
         </div>
