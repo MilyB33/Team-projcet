@@ -8,6 +8,7 @@
       :items="memberItems"
       :loading="loading"
       fieldId="memberId"
+      label="Users"
     />
   </ReportsFilters>
 </template>

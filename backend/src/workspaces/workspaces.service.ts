@@ -56,6 +56,13 @@ export class WorkspacesService {
         _count: {
           select: { projects: true },
         },
+        projects: {
+          include: {
+            members: {
+              include: { time_entries: true },
+            },
+          },
+        },
       },
     });
 

@@ -1,6 +1,6 @@
 <template>
   <v-select
-    label="Workspace"
+    :label="label"
     :items="items"
     density="compact"
     :disabled="loading"
@@ -42,6 +42,7 @@ type IdFilterFieldProps = {
   items: { title: string; value: number }[];
   loading: boolean;
   fieldId: string;
+  label: string;
 };
 
 const props = defineProps<IdFilterFieldProps>();

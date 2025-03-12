@@ -69,5 +69,11 @@ export class ReportsController {
 
       return summary;
     }
+
+    if (user.typeId === 2) {
+      const summary = await this.reportsService.employerOverviewReport(user.id);
+
+      return summary;
+    }
   }
 }

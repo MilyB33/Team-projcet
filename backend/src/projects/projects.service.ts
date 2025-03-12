@@ -33,6 +33,7 @@ export class ProjectsService {
             email: true,
           },
         },
+        time_entries: true,
       },
     },
   };
@@ -130,6 +131,14 @@ export class ProjectsService {
     }
 
     return [];
+  }
+
+  async findCreatorMembers(id: number) {
+    const members = await this.prisma.projectUser.findMany({
+      where: { project: { createdBy: id } },
+    });
+
+    return members;
   }
 
   async findByCreator(id: number) {

@@ -8,6 +8,7 @@
       :items="projectsItems"
       :loading="loading"
       fieldId="projectId"
+      label="Projects"
     />
   </ReportsFilters>
 </template>

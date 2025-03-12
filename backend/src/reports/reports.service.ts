@@ -5,10 +5,16 @@ import { MembersFiltersDto } from './dto/members-filters';
 import { WorkspacesFiltersDto } from './dto/workspaces-filters';
 import { TimeEntryEntity } from 'src/timeEntries/entities/time-entry.entity';
 import { ProjectsFiltersDto } from './dto/projects-filters';
+import { ProjectsService } from 'src/projects/projects.service';
+import { WorkspacesService } from 'src/workspaces/workspaces.service';
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly projectsService: ProjectsService,
+    private readonly workspacesService: WorkspacesService,
+  ) {}
 
   async employeeOverviewReport(id: number) {
     const projects = await this.prisma.project.findMany({
@@ -89,6 +95,20 @@ export class ReportsService {
       totalProjects,
       totalProjectsWorkedLastWeek,
       totalTimeEntriesLastWeek,
+    };
+  }
+
+  async employerOverviewReport(id: number) {
+    const projects = await this.projectsService.findByCreator(id);
+    const workspaces = await this.workspacesService.findByCreator(id);
+    const employees = await this.projectsService.findCreatorMembers(id);
+
+    return {
+      totalProjects: projects.length,
+      totalWorkspaces: workspaces.length,
+      totalEmployees: employees.length,
+      projects,
+      workspaces,
     };
   }
 

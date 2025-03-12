@@ -8,6 +8,7 @@
       :items="workspacesItems"
       :loading="loading"
       fieldId="workspaceId"
+      label="Workspaces"
     />
   </ReportsFilters>
 </template>

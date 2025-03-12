@@ -181,6 +181,14 @@ export type EmployeeSummaryReport = {
   totalTimeEntriesLastWeek: number;
 };
 
+export type EmployerSummaryReport = {
+  totalWorkspaces: number;
+  totalProjects: number;
+  totalEmployees: number;
+  projects: Project[];
+  workspaces: Workspace[];
+};
+
 export type CreateTimeEntryRequest = {
   description: string;
   projectId: number;
