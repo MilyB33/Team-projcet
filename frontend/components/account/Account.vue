@@ -37,16 +37,25 @@
             :error-messages="emailError"
             type="email"
           ></v-text-field>
+          <v-text-field
+            v-if="isEmployer"
+            label="Company name"
+            v-model="company"
+            :error-messages="companyError"
+            variant="outlined"
+          ></v-text-field>
           <v-btn
-            color="success"
+            color="blue"
             class="mt-3"
             type="submit"
+            :disabled="updatingUser"
+            :loading="updatingUser"
             >Save Changes</v-btn
           >
           <v-btn
             color="primary"
             class="mt-3 ml-3"
-            @click="resetPassword"
+            @click="onRequestPasswordChange"
             >Reset Password</v-btn
           >
         </v-form>
@@ -58,22 +67,37 @@
 <script setup lang="ts">
 import { type User } from "~/types";
 
-const { user } = useUser();
+const { user, isEmployer, updateUser, updatingUser } = useUser();
 const { requestPasswordReset } = useAuth();
-const form = useForm({ validationSchema: personalDetailsTypedSchema });
+
+const accountType = computed(() => {
+  return isEmployer ? "Employer" : "Standard";
+});
+
+const form = useForm({
+  validationSchema: isEmployer.value
+    ? updateEmployerAccountDetailsTypedSchema
+    : updateStandardAccountDetailsTypedSchema,
+});
 const { value: firstName, errorMessage: firstNameError } = useField("firstName");
 const { value: lastName, errorMessage: lastNameError } = useField("lastName");
 const { value: email, errorMessage: emailError } = useField("email");
-const accountType = ref("IT engineer");
+const { value: company, errorMessage: companyError } = useField("company");
 
-const resetPassword = () => {
+const onRequestPasswordChange = () => {
   if (user.value) {
     requestPasswordReset(user.value?.email);
   }
 };
 
-const onSubmit = form.handleSubmit((values) => {
-  console.log(values);
+const onSubmit = form.handleSubmit(async (values) => {
+  await updateUser({
+    first_name: values.firstName,
+    last_name: values.lastName,
+    email: values.email,
+    // @ts-ignore
+    company: values.company,
+  });
 });
 
 const setInitialValues = (user: User) => {
@@ -101,10 +125,6 @@ onMounted(() => {
   if (user.value) {
     setInitialValues(user.value);
   }
-});
-
-definePageMeta({
-  middleware: "auth",
 });
 </script>
 
