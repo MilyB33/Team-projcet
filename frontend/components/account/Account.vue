@@ -1,5 +1,6 @@
 <template>
   <v-container
+    width="100%"
     fluid
     class="pa-5"
   >
@@ -127,11 +128,3 @@ onMounted(() => {
   }
 });
 </script>
-
-<style scoped>
-.v-container {
-  width: 100%;
-  margin: 0;
-  padding-left: 0;
-}
-</style>
