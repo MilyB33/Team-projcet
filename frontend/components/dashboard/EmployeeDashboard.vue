@@ -61,7 +61,7 @@
                 <p>{{ project.projectName }}</p>
 
                 <NuxtLink
-                  to="/"
+                  :to="`/projects/${project.projectId}`"
                   class="text-black"
                 >
                   <v-btn variant="plain">Go to</v-btn>

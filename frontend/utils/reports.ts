@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import type {
   EmployeeProjectsReport,
   MembersReport,
@@ -263,8 +265,8 @@ const mapTimeEntries = (timeEntries: TimeEntry[]) => {
     project: timeEntry.projectUser.project.name,
     member: timeEntry?.projectUser?.user?.email,
     description: timeEntry.description,
-    startTime: timeEntry.startTime,
-    endTime: timeEntry.endTime,
+    startTime: moment(timeEntry.startTime).format("DD-MM-YYYY HH:mm:ss"),
+    endTime: moment(timeEntry.endTime).format("DD-MM-YYYY HH:mm:ss"),
     hours: timeEntry.totalTime,
   }));
 };

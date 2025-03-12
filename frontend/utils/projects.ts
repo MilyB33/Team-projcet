@@ -206,7 +206,7 @@ export const prepareEmployerActiveMembersTableData = (members: ProjectUser[]) =>
     lp: index + 1,
     name: `${member.user.first_name} ${member.user.last_name}`,
     email: member.user.email,
-    startTime: member.time_entries[0].startTime,
+    startTime: moment(member.time_entries[0].startTime).format("DD-MM-YYYY HH:mm:ss"),
     hours: member.totalTime,
   }));
 };
@@ -255,15 +255,19 @@ export const prepareEmployeeProjectsTimeEntries = (timeEntries: TimeEntry[]) => 
     timeEntry,
     lp: index + 1,
     description: timeEntry.description,
-    startTime: timeEntry.startTime,
-    endTime: timeEntry.endTime,
+    startTime: moment(timeEntry.startTime).format("DD-MM-YYYY HH:mm:ss"),
+    endTime: moment(timeEntry.endTime).format("DD-MM-YYYY HH:mm:ss"),
     creationDate: timeEntry.createdAt,
     totalTime:
       moment
         .utc(
           moment
             .duration(moment(timeEntry.endTime).diff(moment(timeEntry.startTime)))
-            .asMilliseconds(),
+            .asMilliseconds() < 60000
+            ? 60000
+            : moment
+                .duration(moment(timeEntry.endTime).diff(moment(timeEntry.startTime)))
+                .asMilliseconds(),
         )
         .format("HH:mm") + " hours",
   }));
