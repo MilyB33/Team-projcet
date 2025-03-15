@@ -1,6 +1,13 @@
 <template>
   <v-divider></v-divider>
-  <h2>Active members</h2>
+  <div class="d-flex">
+    <h2>Active members</h2>
+    <v-btn
+      @click="refetchMembers"
+      class="ml-auto"
+      >Refetch</v-btn
+    >
+  </div>
   <v-data-table
     hide-default-footer
     :headers="employerActiveMembersTableHeaders"
@@ -14,6 +21,7 @@ import type { ProjectUser } from "~/types";
 
 type EmployerProjectActiveMembersProps = {
   activeMembers: ProjectUser[];
+  refetchMembers: () => void;
 };
 
 const props = defineProps<EmployerProjectActiveMembersProps>();

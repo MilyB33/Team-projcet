@@ -21,7 +21,11 @@ export const useProject = () => {
     enabled: !!projectId,
   });
 
-  const { data: activeMembers, isLoading: loadingActiveMembers } = useQuery({
+  const {
+    data: activeMembers,
+    isLoading: loadingActiveMembers,
+    refetch: refetchMembers,
+  } = useQuery({
     queryKey: [API_KEY.ACTIVE_MEMBERS],
     queryFn: async (): Promise<ProjectUser[]> =>
       (await client.get(`/projects/${projectId}/members/active`)).data,
@@ -89,5 +93,6 @@ export const useProject = () => {
     generateAccessCode,
     deleteProject,
     updateProject,
+    refetchMembers,
   };
 };

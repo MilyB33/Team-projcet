@@ -37,10 +37,12 @@
     <EmployerProjectActiveMembers
       v-if="!loadingActiveMembers"
       :activeMembers="activeMembers || []"
+      :refetchMembers="refetchMembers"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-const { project, loadingProject, activeMembers, loadingActiveMembers } = useProject();
+const { project, loadingProject, activeMembers, loadingActiveMembers, refetchMembers } =
+  useProject();
 </script>
