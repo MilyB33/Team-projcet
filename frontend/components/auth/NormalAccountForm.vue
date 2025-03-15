@@ -45,8 +45,8 @@
     <v-btn
       type="submit"
       color="pink"
-      :loading="isLoading"
-      :disabled="isLoading"
+      :loading="isCreatingAccount"
+      :disabled="isCreatingAccount"
       >Create account</v-btn
     >
 
@@ -63,9 +63,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useMutation } from "@tanstack/vue-query";
-import type { CreateUserRequest, CreateUserResponse } from "~/types";
-
 const isPasswordVisible = ref(false);
 
 const form = useForm({ validationSchema: createRegularAccountTypedSchema });
@@ -74,20 +71,7 @@ const { value: surname, errorMessage: surnameError } = useField<string>("surname
 const { value: email, errorMessage: emailError } = useField<string>("email");
 const { value: password, errorMessage: passwordError } = useField<string>("password");
 
-const { client } = useAxiosClient();
-const { snackbar } = useSnackbar();
-
-const { mutate: createAccount, isPending: isLoading } = useMutation({
-  mutationFn: async (data: CreateUserRequest): Promise<CreateUserResponse> =>
-    (await client.post("http://localhost:9000/api/users/", data)).data,
-  onSuccess: () => {
-    snackbar.success("Successfully created account!");
-    navigateTo("/login");
-  },
-  onError: (error) => {
-    snackbar.error(error.message || "Something went wrong!");
-  },
-});
+const { createAccount, isCreatingAccount } = useAuth();
 
 const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value;
