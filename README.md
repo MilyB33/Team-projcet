@@ -2,7 +2,7 @@
 
 ## Overview
 
-TaskTime Tracker is a comprehensive application designed to streamline the process of time measurement for tasks, catering to both employers and employees. This app provides an intuitive interface for tracking the time spent on various tasks, enhancing productivity and accountability within the workplace.
+Clocker is a comprehensive application designed to streamline the process of time measurement for tasks, catering to both employers and employees. This app provides an intuitive interface for tracking the time spent on various tasks, enhancing productivity and accountability within the workplace.
 
 ## Prerequisites
 
